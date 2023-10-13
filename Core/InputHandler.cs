@@ -1,4 +1,6 @@
-﻿namespace Tetris.Core;
+﻿using Tetris.Tetrominos;
+
+namespace Tetris.Core;
 
 public class InputHandler
 {
@@ -34,6 +36,18 @@ public class InputHandler
             
             case ConsoleKey.Z:
                 game.RotateTetromino(true);
+                break;
+            
+            case ConsoleKey.LeftArrow:
+                game.MoveTetromino(EMoveDirecton.LEFT);
+                break;
+            
+            case ConsoleKey.DownArrow:
+                game.MoveTetromino(EMoveDirecton.DOWN);
+                break;
+            
+            case ConsoleKey.RightArrow:
+                game.MoveTetromino(EMoveDirecton.RIGHT);
                 break;
             
             case ConsoleKey.C:

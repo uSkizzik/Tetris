@@ -9,6 +9,14 @@ public enum ERotationState
     LEFT
 }
 
+public enum EMoveDirecton
+{
+    RIGHT,
+    DOWN,
+    LEFT,
+    HARD_DROP
+}
+
 public abstract class Tetromino
 {
     protected readonly Point canvasSize;
@@ -59,6 +67,24 @@ public abstract class Tetromino
         else if (newRot > 3) newRot = 0;
         
         rotation = (ERotationState) newRot;
+    }
+
+    public void Move(EMoveDirecton direction)
+    {
+        switch (direction)
+        {
+            case EMoveDirecton.RIGHT:
+                position.X++;
+                break;
+            
+            case EMoveDirecton.DOWN:
+                position.Y++;
+                break;
+            
+            case EMoveDirecton.LEFT:
+                position.X--;
+                break;
+        }
     }
     
     public abstract bool[,] Render

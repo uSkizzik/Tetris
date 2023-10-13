@@ -97,6 +97,17 @@ public class TetrisGame
         activeTetromino.Rotate(counterClockwise);
     }
 
+    public void MoveTetromino(EMoveDirecton direction)
+    {
+        if (activeTetromino == null)
+        {
+            audioPlayer.PlayErrorSound();
+            return;
+        }
+
+        activeTetromino.Move(direction);
+    }
+
     public void HoldTetromino()
     {
         if (activeTetromino == null || activeTetromino.wasHeld)
