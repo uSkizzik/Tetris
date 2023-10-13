@@ -18,6 +18,7 @@ namespace Tetris
         private int moveTime;
         private System.Timers.Timer timer;
 
+        private Randomizer randomizer;
         private Renderer renderer;
 
         public TetrisGame()
@@ -30,6 +31,7 @@ namespace Tetris
             Console.CursorVisible = false;
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+            randomizer = new Randomizer(canvasSize);
             renderer = new Renderer(canvasSize);
         }
 
@@ -37,12 +39,6 @@ namespace Tetris
         {
             this.moveTime = moveTime;
             timer.Interval = this.moveTime;
-        }
-
-        private Tetromino RandomTetromino()
-        {
-            Type[] opts = { typeof(OTetromino), typeof(LTetromino) };
-            return Activator.CreateInstance(opts[new Random().Next(opts.Length)], canvasSize) as Tetromino;
         }
 
         private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
@@ -58,16 +54,16 @@ namespace Tetris
                     renderer.DrawTetromino(activeTetromino, filledPixels, pixelColors);
 
                     activeTetromino = tetrominoQueue[0];
-                    tetrominoQueue.Add(RandomTetromino());
+                    tetrominoQueue.Add(randomizer.RandomTetromino());
                     tetrominoQueue.RemoveAt(0);
                 }
             }
         }
 
         public void Run() {
-            activeTetromino = RandomTetromino();
+            activeTetromino = randomizer.RandomTetromino();
             Console.WriteLine(activeTetromino);
-            tetrominoQueue.Add(RandomTetromino());
+            tetrominoQueue.Add(randomizer.RandomTetromino());
 
             timer.Enabled = true;
 
