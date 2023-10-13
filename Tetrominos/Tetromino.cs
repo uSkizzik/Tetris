@@ -4,7 +4,7 @@ namespace Tetris.Tetrominos;
 public abstract class Tetromino
 {
     protected readonly Point canvasSize;
-    public Point pos = new (0, 0);
+    private Point position = new (0, 0);
 
     public Tetromino(Point canvasSize)
     {
@@ -14,6 +14,22 @@ public abstract class Tetromino
     public abstract ConsoleColor Color
     {
         get;
+    }
+
+    public Point Position
+    {
+        get => position;
+    }
+
+    public void Reset()
+    {
+        position.X = 0;
+        position.Y = 0;
+    }
+
+    public void Tick()
+    {
+        position.Y++;
     }
 
     public abstract bool[,] Render();

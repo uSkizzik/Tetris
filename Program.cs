@@ -15,6 +15,7 @@ public class TetrisGame
     private static Screen screen;
     
     private Tetromino? activeTetromino;
+    private Tetromino? heldTetromino;
     private List<Tetromino> tetrominoQueue = new ();
 
     private int moveTime;
@@ -26,7 +27,7 @@ public class TetrisGame
 
     public TetrisGame()
     {
-        screen = Tetris.Screen.GAME;
+        screen = Screen.GAME;
         
         timer = new System.Timers.Timer();
         //SetMoveTime(1500);
@@ -57,19 +58,25 @@ public class TetrisGame
         timer.Interval = this.moveTime;
     }
 
+    private void SpawnTetromino(Tetromino tetromino)
+    {
+        tetromino.Reset();
+        activeTetromino = tetromino;
+    }
+
     private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
     {
         int maxPos = canvasSize.Y;
 
         if (activeTetromino != null)
         {
-            if (activeTetromino.pos.Y + activeTetromino.Render().GetLength(0) < maxPos)
-                activeTetromino.pos.Y++;
+            if (activeTetromino.Position.Y + activeTetromino.Render().GetLength(0) < maxPos)
+                activeTetromino.Tick();
             else if (tetrominoQueue.Count > 0)
             {
                 renderer.LockTetromino(activeTetromino);
 
-                activeTetromino = tetrominoQueue[0];
+                SpawnTetromino(tetrominoQueue[0]);
                 tetrominoQueue.Add(randomizer.RandomTetromino());
                 tetrominoQueue.RemoveAt(0);
             }

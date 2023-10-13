@@ -60,8 +60,8 @@ public class Renderer
         {
             for (int j = 0; j < shape.GetLength(0); j++)
             {
-                int canvasX = tetromino.pos.X + i;
-                int canvasY = tetromino.pos.Y + j;
+                int canvasX = tetromino.Position.X + i;
+                int canvasY = tetromino.Position.Y + j;
 
                 if (shape[j, i])
                 {
