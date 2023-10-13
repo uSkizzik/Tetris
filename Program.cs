@@ -2,81 +2,100 @@
 using Tetris.Core;
 using Tetris.Tetrominos;
 
-namespace Tetris
+namespace Tetris;
+
+public enum Screen
 {
+    GAME
+}
 
-    class TetrisGame
+public class TetrisGame
+{
+    private static readonly Point canvasSize = new (10, 20);
+    private static Screen screen;
+    
+    private Tetromino? activeTetromino;
+    private List<Tetromino> tetrominoQueue = new ();
+
+    private int moveTime;
+    private readonly System.Timers.Timer timer;
+
+    private readonly InputHandler inputHandler;
+    private readonly Randomizer randomizer;
+    private readonly Renderer renderer;
+
+    public TetrisGame()
     {
-        private static readonly Point canvasSize = new (10, 20);
+        screen = Tetris.Screen.GAME;
+        
+        timer = new System.Timers.Timer();
+        //SetMoveTime(1500);
+        SetMoveTime(300);
+        timer.Elapsed += TickTetromino;
 
-        private Tetromino? activeTetromino;
-        private List<Tetromino> tetrominoQueue = new ();
+        inputHandler = new InputHandler(this);
+        randomizer = new Randomizer(canvasSize);
+        renderer = new Renderer(canvasSize);
 
-        private int moveTime;
-        private readonly System.Timers.Timer timer;
+        Console.CursorVisible = false;
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+    }
 
-        private readonly Randomizer randomizer;
-        private readonly Renderer renderer;
+    public Tetromino ActiveTetromino
+    {
+        get => activeTetromino;
+    }
 
-        public TetrisGame()
+    public Screen Screen
+    {
+        get => Screen;
+    }
+
+    private void SetMoveTime(int moveTime)
+    {
+        this.moveTime = moveTime;
+        timer.Interval = this.moveTime;
+    }
+
+    private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
+    {
+        int maxPos = canvasSize.Y;
+
+        if (activeTetromino != null)
         {
-            timer = new System.Timers.Timer();
-            //SetMoveTime(1500);
-            SetMoveTime(300);
-            timer.Elapsed += TickTetromino;
-
-            Console.CursorVisible = false;
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-            randomizer = new Randomizer(canvasSize);
-            renderer = new Renderer(canvasSize);
-        }
-
-        private void SetMoveTime(int moveTime)
-        {
-            this.moveTime = moveTime;
-            timer.Interval = this.moveTime;
-        }
-
-        private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
-        {
-            int maxPos = canvasSize.Y;
-
-            if (activeTetromino != null)
+            if (activeTetromino.pos.Y + activeTetromino.Render().GetLength(0) < maxPos)
+                activeTetromino.pos.Y++;
+            else if (tetrominoQueue.Count > 0)
             {
-                if (activeTetromino.pos.Y + activeTetromino.Render().GetLength(0) < maxPos)
-                    activeTetromino.pos.Y++;
-                else if (tetrominoQueue.Count > 0)
-                {
-                    renderer.LockTetromino(activeTetromino);
+                renderer.LockTetromino(activeTetromino);
 
-                    activeTetromino = tetrominoQueue[0];
-                    tetrominoQueue.Add(randomizer.RandomTetromino());
-                    tetrominoQueue.RemoveAt(0);
-                }
-            }
-        }
-
-        public void Run() {
-            activeTetromino = randomizer.RandomTetromino();
-            tetrominoQueue.Add(randomizer.RandomTetromino());
-
-            timer.Enabled = true;
-            // SongPlayer.PlayThemeSong();
-            
-            while (true)
-            {
-                renderer.DrawFrame(activeTetromino, tetrominoQueue);
+                activeTetromino = tetrominoQueue[0];
+                tetrominoQueue.Add(randomizer.RandomTetromino());
+                tetrominoQueue.RemoveAt(0);
             }
         }
     }
 
-    internal class Program
-    {
-        static void Main(string[] args)
+    public void Run() {
+        activeTetromino = randomizer.RandomTetromino();
+        tetrominoQueue.Add(randomizer.RandomTetromino());
+
+        timer.Enabled = true;
+        // SongPlayer.PlayThemeSong();
+        
+        while (true)
         {
-            TetrisGame game = new TetrisGame();
-            game.Run();
+            renderer.DrawFrame(activeTetromino, tetrominoQueue);
+            inputHandler.HandleInput();
         }
+    }
+}
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+        TetrisGame game = new TetrisGame();
+        game.Run();
     }
 }

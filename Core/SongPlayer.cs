@@ -4,7 +4,7 @@ public class SongPlayer
 {
     public static void PlayThemeSong()
     {
-        Task.Run((Action)PlayThemeSongThreaded);
+        Task.Run(PlayThemeSongThreaded);
     }
     
     // I cannot be bothered to make this myself.
