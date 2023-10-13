@@ -5,22 +5,33 @@ namespace Tetris.Core;
 
 public class Renderer
 {
-    private readonly Point matrixSize;
-    private static int borderSize = 2;
+    private static readonly char fullTile = '■';
+    private static readonly char emptyTile = '◦';
+    private static readonly int borderSize = 2;
     
+    private readonly Point matrixSize;
     private readonly int matrixOffsetLeft;
     private readonly int matrixOffsetRight;
-
-    private static char fullTile = '■';
-    private static char emptyTile = '◦';
-
+    
+    private readonly bool[,] bgCanvas;
+    private readonly ConsoleColor[,] bgColorCanvas;
+    
     public Renderer(Point matrixSize)
     {
         this.matrixSize = matrixSize;
-        this.matrixOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
-        this.matrixOffsetRight = matrixSize.X * 2 + matrixOffsetLeft + borderSize + 2;
+        matrixOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
+        matrixOffsetRight = matrixSize.X * 2 + matrixOffsetLeft + borderSize + 2;
+        
+        
+        bgCanvas = new bool[matrixSize.X, matrixSize.Y];
+        bgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
     }
 
+    public void LockTetromino(Tetromino tetromino)
+    {
+        DrawTetromino(tetromino, bgCanvas, bgColorCanvas);
+    }
+    
     public void DrawTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, bool overrideTiles = false)
     {
         bool[,] shape = tetromino.Render();
@@ -90,6 +101,56 @@ public class Renderer
             Console.Write(new string(' ', Console.WindowWidth)); 
             Console.SetCursorPosition(0, currentLineCursor);
         }
+    }
+
+    public void DrawFrame(Tetromino activeTetromino, List<Tetromino> tetrominoQueue)
+    {
+        bool[,] fgCanvas = new bool[matrixSize.X, matrixSize.Y];
+        ConsoleColor[,] fgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
+        
+        DrawTetromino(activeTetromino, fgCanvas, fgColorCanvas);
+
+        Console.CursorLeft = 0;
+        Console.CursorTop = 0;
+
+        int fieldOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
+        int fieldOffsetRight = Console.WindowWidth - matrixSize.X * 2 - fieldOffsetLeft - 6;
+
+        for (int y = 0; y <= matrixSize.Y; y++)
+        {
+            Console.ForegroundColor = ConsoleColor.Gray;
+                    
+            Console.Write(new string(' ', fieldOffsetLeft));
+            Console.Write("<!");
+
+            if (y < matrixSize.Y)
+            {
+                for (int x = 0; x < matrixSize.X; x++)
+                {
+                    bool isTileFilled = fgCanvas[x, y] || bgCanvas[x, y];
+                    ConsoleColor tileColor = fgColorCanvas[x, y] != ConsoleColor.Black ? fgColorCanvas[x, y] : bgColorCanvas[x, y];
+
+                    Console.ForegroundColor = isTileFilled && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
+                    Console.Write(isTileFilled ? fullTile + " " : emptyTile + " ");
+                }
+            }
+            else
+            {
+                Console.Write(new string('=', matrixSize.X * 2));
+            }
+
+            Console.Write("!>");
+            // Console.Write(new string(' ', fieldOffsetRight));
+
+            Console.WriteLine();
+        }
+
+        Console.Write(new string(' ', fieldOffsetLeft + 2));
+        Console.WriteLine(string.Concat(Enumerable.Repeat("\\/", matrixSize.X)));
+        // Console.Write(new string(' ', fieldOffsetRight));
+
+        DrawQueue(tetrominoQueue);
+        ClearEmptyLines();
     }
 }
 

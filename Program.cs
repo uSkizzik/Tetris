@@ -9,9 +9,6 @@ namespace Tetris
     {
         private static readonly Point canvasSize = new Point(10, 20);
 
-        private readonly bool[,] filledPixels = new bool[canvasSize.X, canvasSize.Y];
-        private readonly ConsoleColor[,] pixelColors = new ConsoleColor[canvasSize.X, canvasSize.Y];
-
         private Tetromino? activeTetromino;
         private List<Tetromino> tetrominoQueue = new List<Tetromino>();
 
@@ -43,15 +40,15 @@ namespace Tetris
 
         private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
         {
-            int maxPos = canvasSize.Y - 1;
+            int maxPos = canvasSize.Y;
 
             if (activeTetromino != null)
             {
-                if (activeTetromino.pos.Y + activeTetromino.Render().GetLength(1) < maxPos)
+                if (activeTetromino.pos.Y + activeTetromino.Render().GetLength(0) < maxPos)
                     activeTetromino.pos.Y++;
                 else if (tetrominoQueue.Count > 0)
                 {
-                    renderer.DrawTetromino(activeTetromino, filledPixels, pixelColors);
+                    renderer.LockTetromino(activeTetromino);
 
                     activeTetromino = tetrominoQueue[0];
                     tetrominoQueue.Add(randomizer.RandomTetromino());
@@ -62,59 +59,13 @@ namespace Tetris
 
         public void Run() {
             activeTetromino = randomizer.RandomTetromino();
-            Console.WriteLine(activeTetromino);
             tetrominoQueue.Add(randomizer.RandomTetromino());
 
             timer.Enabled = true;
 
             while (true)
             {
-                bool[,] canvas = new bool[canvasSize.X, canvasSize.Y];
-                ConsoleColor[,] colorCanvas = new ConsoleColor[canvasSize.X, canvasSize.Y];
-                
-                renderer.DrawTetromino(activeTetromino, canvas, colorCanvas);
-
-                Console.CursorLeft = 0;
-                Console.CursorTop = 0;
-
-                int fieldOffsetLeft = Console.WindowWidth / 2 - canvasSize.X;
-                int fieldOffsetRight = Console.WindowWidth - canvasSize.X * 2 - fieldOffsetLeft - 6;
-
-                for (int y = 0; y <= canvasSize.Y; y++)
-                {
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    
-                    Console.Write(new string(' ', fieldOffsetLeft));
-                    Console.Write("<!");
-
-                    if (y < canvasSize.Y)
-                    {
-                        for (int x = 0; x < canvasSize.X; x++)
-                        {
-                            bool isTileFilled = canvas[x, y] || filledPixels[x, y];
-                            ConsoleColor tileColor = pixelColors[x, y] != ConsoleColor.Black ? pixelColors[x, y] : colorCanvas[x, y];
-
-                            Console.ForegroundColor = isTileFilled && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
-                            Console.Write(isTileFilled ? "■ " : "◦ ");
-                        }
-                    }
-                    else
-                    {
-                        Console.Write(new string('=', canvasSize.X * 2));
-                    }
-
-                    Console.Write("!>");
-                    // Console.Write(new string(' ', fieldOffsetRight));
-
-                    Console.WriteLine();
-                }
-
-                Console.Write(new string(' ', fieldOffsetLeft + 2));
-                Console.WriteLine(string.Concat(Enumerable.Repeat("\\/", canvasSize.X)));
-                // Console.Write(new string(' ', fieldOffsetRight));
-
-                renderer.DrawQueue(tetrominoQueue);
-                renderer.ClearEmptyLines();
+                renderer.DrawFrame(activeTetromino, tetrominoQueue);
             }
         }
     }
