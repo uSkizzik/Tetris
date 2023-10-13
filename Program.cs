@@ -1,4 +1,6 @@
 ﻿using System.Drawing;
+using System.Linq;
+using Tetris.Core;
 using Tetris.Tetrominos;
 
 namespace Tetris
@@ -11,20 +13,25 @@ namespace Tetris
         private bool[,] filledPixels = new bool[canvasSize.X, canvasSize.Y];
         private ConsoleColor[,] pixelColors = new ConsoleColor[canvasSize.X, canvasSize.Y];
 
-        private Tetrominos.Tetromino? activeTetromino;
-        private Point tetrominoPos = new Point(0, 0);
+        private Tetromino? activeTetromino;
+        private List<Tetromino> tetrominoQueue = new List<Tetromino>();
 
         private int moveTime;
         private System.Timers.Timer timer;
 
+        private Renderer renderer;
+
         public TetrisGame()
         {
             timer = new System.Timers.Timer();
-            SetMoveTime(1500);
+            //SetMoveTime(1500);
+            SetMoveTime(300);
             timer.Elapsed += TickTetromino;
 
             Console.CursorVisible = false;
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            renderer = new Renderer(canvasSize);
         }
 
         private void SetMoveTime(int moveTime)
@@ -33,38 +40,63 @@ namespace Tetris
             timer.Interval = this.moveTime;
         }
 
+        private Tetromino RandomTetromino()
+        {
+            Type[] opts = { typeof(OTetromino), typeof(LTetromino) };
+            return Activator.CreateInstance(opts[new Random().Next(opts.Length)], canvasSize) as Tetromino;
+        }
+
         private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
         {
             int maxPos = canvasSize.Y - 1;
 
-            if (activeTetromino != null && tetrominoPos.Y + activeTetromino.Render().GetLength(1) < maxPos)
-                tetrominoPos.Y++;
+            if (activeTetromino != null)
+            {
+                if (activeTetromino.pos.Y + activeTetromino.Render().GetLength(1) < maxPos)
+                    activeTetromino.pos.Y++;
+                else if (tetrominoQueue.Count > 0)
+                {
+                    RenderTetromino(activeTetromino, filledPixels);
+
+                    activeTetromino = tetrominoQueue[0];
+                    tetrominoQueue.Add(RandomTetromino());
+                    tetrominoQueue.RemoveAt(0);
+                }
+            }
+        }
+
+        private void RenderTetromino(Tetromino tetromino, bool[,] canvas)
+        {
+            bool[,] shape = activeTetromino.Render();
+            ConsoleColor color = activeTetromino.Color;
+
+            for (int i = 0; i < shape.GetLength(1); i++)
+            {
+                for (int j = 0; j < shape.GetLength(0); j++)
+                {
+                    int canvasX = activeTetromino.pos.X + i;
+                    int canvasY = activeTetromino.pos.Y + j;
+
+                    if (shape[j, i])
+                    {
+                        canvas[canvasX, canvasY] = true;
+                        pixelColors[canvasX, canvasY] = color;
+                    }
+                }
+            }
         }
 
         public void Run() {
+            activeTetromino = RandomTetromino();
+            Console.WriteLine(activeTetromino);
+            tetrominoQueue.Add(RandomTetromino());
+
             timer.Enabled = true;
-            activeTetromino = new LTetromino(canvasSize);
 
             while (true)
             {
                 bool[,] canvas = new bool[canvasSize.X, canvasSize.Y];
-                bool[,] tetromino = activeTetromino.Render();
-                ConsoleColor tetrominoColor = activeTetromino.Color;
-
-                for (int i = 0; i < tetromino.GetLength(1); i++)
-                {
-                    for (int j = 0; j < tetromino.GetLength(0); j++)
-                    {
-                        int canvasX = tetrominoPos.X + i;
-                        int canvasY = tetrominoPos.Y + j;
-
-                        if (tetromino[j, i])
-                        {
-                            canvas[canvasX, canvasY] = true;
-                            pixelColors[canvasX, canvasY] = tetrominoColor;
-                        }
-                    }
-                }
+                RenderTetromino(activeTetromino, canvas);
 
                 Console.CursorLeft = 0;
                 Console.CursorTop = 0;
@@ -101,6 +133,8 @@ namespace Tetris
                 Console.Write(new string(' ', fieldOffsetLeft + 2));
                 Console.WriteLine(string.Concat(Enumerable.Repeat("\\/", canvasSize.X)));
                 Console.Write(new string(' ', fieldOffsetRight));
+
+                renderer.renderQueue(tetrominoQueue);
             }
         }
     }
