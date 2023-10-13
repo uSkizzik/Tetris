@@ -62,7 +62,8 @@ namespace Tetris
             tetrominoQueue.Add(randomizer.RandomTetromino());
 
             timer.Enabled = true;
-
+            // SongPlayer.PlayThemeSong();
+            
             while (true)
             {
                 renderer.DrawFrame(activeTetromino, tetrominoQueue);
