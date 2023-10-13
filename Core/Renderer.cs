@@ -27,6 +27,16 @@ public class Renderer
         bgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
     }
 
+    public bool[,] BGCanvas
+    {
+        get => bgCanvas;
+    }
+
+    public ConsoleColor[,] BGColorCanvas
+    {
+        get => bgColorCanvas;
+    }
+
     public void LockTetromino(Tetromino tetromino)
     {
         DrawTetromino(tetromino, bgCanvas, bgColorCanvas);

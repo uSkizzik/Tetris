@@ -7,10 +7,10 @@ namespace Tetris
 
     class TetrisGame
     {
-        private static readonly Point canvasSize = new Point(10, 20);
+        private static readonly Point canvasSize = new (10, 20);
 
         private Tetromino? activeTetromino;
-        private List<Tetromino> tetrominoQueue = new List<Tetromino>();
+        private List<Tetromino> tetrominoQueue = new ();
 
         private int moveTime;
         private readonly System.Timers.Timer timer;
