@@ -37,7 +37,7 @@ public class TetrisGame
 
         audioPlayer = new AudioPlayer();
         inputHandler = new InputHandler(this);
-        randomizer = new Randomizer(canvasSize);
+        randomizer = new Randomizer(canvasSize, audioPlayer);
         renderer = new Renderer(canvasSize, this);
 
         Console.CursorVisible = false;
@@ -105,7 +105,7 @@ public class TetrisGame
             return;
         }
 
-        activeTetromino.Move(direction);
+        activeTetromino.Move(direction, renderer.BGCanvas);
     }
 
     public void HoldTetromino()
@@ -118,7 +118,6 @@ public class TetrisGame
         
         Tetromino toBeHeld = activeTetromino;
         toBeHeld.wasHeld = true;
-        toBeHeld.Reset();
 
         if (heldTetromino == null)
         {
@@ -127,17 +126,17 @@ public class TetrisGame
         }
 
         SpawnTetromino(heldTetromino);
+        
+        toBeHeld.Reset();
         heldTetromino = toBeHeld;
     }
 
     private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
     {
-        int maxPos = canvasSize.Y;
-
         if (activeTetromino != null)
         {
-            if (activeTetromino.Position.Y + activeTetromino.Render.GetLength(0) < maxPos)
-                activeTetromino.Tick();
+            if (!activeTetromino.WillCollide(renderer.BGCanvas, new Point( activeTetromino.Position.X, activeTetromino.Position.Y + 1)))
+                activeTetromino.Move(EMoveDirecton.DOWN, renderer.BGCanvas);
             else if (tetrominoQueue.Count > 0)
             {
                 renderer.LockTetromino(activeTetromino);
@@ -151,7 +150,7 @@ public class TetrisGame
         tetrominoQueue.Add(randomizer.RandomTetromino());
 
         timer.Enabled = true;
-        // SongPlayer.PlayThemeSong();
+        AudioPlayer.PlayThemeSong();
         
         while (true)
         {

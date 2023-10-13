@@ -6,7 +6,7 @@ public class AudioPlayer
     
     public AudioPlayer()
     {
-        this.canPlaySound = true;
+        canPlaySound = true;
     }
     
     public void PlayErrorSound()

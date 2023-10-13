@@ -1,9 +1,11 @@
 ﻿using System.Drawing;
+using Tetris.Core;
+
 namespace Tetris.Tetrominos;
 
 public class ZTetromino : Tetromino
 {
-    public ZTetromino(Point canvasSize) : base(canvasSize)
+    public ZTetromino(Point canvasSize, AudioPlayer audioPlayer) : base(canvasSize, audioPlayer)
     {
     }
 
@@ -12,7 +14,7 @@ public class ZTetromino : Tetromino
         get => ConsoleColor.Red;
     }
 
-    public override bool[,] Render
+    public override bool[,] Shape
     {
         get
         {
