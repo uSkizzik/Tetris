@@ -74,6 +74,7 @@ public class TetrisGame
     {
         tetromino.Reset();
         activeTetromino = tetromino;
+        activeTetromino.Spawn();
     }
 
     private Tetromino MoveQueue()
@@ -146,7 +147,7 @@ public class TetrisGame
     }
 
     public void Run() {
-        activeTetromino = randomizer.RandomTetromino();
+        SpawnTetromino(randomizer.RandomTetromino());
         tetrominoQueue.Add(randomizer.RandomTetromino());
 
         timer.Enabled = true;

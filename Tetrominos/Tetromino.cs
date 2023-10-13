@@ -55,6 +55,12 @@ public abstract class Tetromino
         get => rotation;
     }
 
+    public void Spawn()
+    {
+        position.X = (int) Math.Floor((double) canvasSize.X / 2 - (double) GetShape().GetLength(1) / 2);
+        position.Y = 0;
+    }
+
     public void Reset()
     {
         position.X = 0;
