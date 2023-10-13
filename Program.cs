@@ -86,6 +86,17 @@ public class TetrisGame
         return toSpawn;
     }
 
+    public void RotateTetromino(bool counterClockwise)
+    {
+        if (activeTetromino == null)
+        {
+            audioPlayer.PlayErrorSound();
+            return;
+        }
+
+        activeTetromino.Rotate(counterClockwise);
+    }
+
     public void HoldTetromino()
     {
         if (activeTetromino == null || activeTetromino.wasHeld)
@@ -96,6 +107,7 @@ public class TetrisGame
         
         Tetromino toBeHeld = activeTetromino;
         toBeHeld.wasHeld = true;
+        toBeHeld.Reset();
 
         if (heldTetromino == null)
         {
@@ -113,7 +125,7 @@ public class TetrisGame
 
         if (activeTetromino != null)
         {
-            if (activeTetromino.Position.Y + activeTetromino.Render().GetLength(0) < maxPos)
+            if (activeTetromino.Position.Y + activeTetromino.Render.GetLength(0) < maxPos)
                 activeTetromino.Tick();
             else if (tetrominoQueue.Count > 0)
             {

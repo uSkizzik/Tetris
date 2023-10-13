@@ -9,20 +9,19 @@ public class OTetromino : Tetromino
 
     public override ConsoleColor Color
     {
-        get
-        {
-            return ConsoleColor.Yellow;
-        }
+        get => ConsoleColor.Yellow;
     }
 
-    public override bool[,] Render()
+    public override bool[,] Render
     {
-        bool[,] shape = {
-            { true, true },
-            { true, true }
-        };
-
-        return shape;
+        get
+        {
+            return new [,]
+            {
+                { true, true },
+                { false, true }
+            };
+        }
     }
 }
 

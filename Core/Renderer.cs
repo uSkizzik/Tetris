@@ -47,7 +47,7 @@ public class Renderer
     
     public void DrawTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, bool staticRender = false)
     {
-        bool[,] shape = tetromino.Render();
+        bool[,] shape = tetromino.Render;
         ConsoleColor color = tetromino.Color;
 
         // if (staticRender)

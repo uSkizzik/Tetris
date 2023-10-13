@@ -28,6 +28,14 @@ public class InputHandler
     {
         switch (key)  
         {
+            case ConsoleKey.UpArrow:
+                game.RotateTetromino(false);
+                break;
+            
+            case ConsoleKey.Z:
+                game.RotateTetromino(true);
+                break;
+            
             case ConsoleKey.C:
                 game.HoldTetromino();
                 break;

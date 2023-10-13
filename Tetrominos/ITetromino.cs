@@ -9,19 +9,65 @@ public class ITetromino : Tetromino
 
     public override ConsoleColor Color
     {
-        get
-        {
-            return ConsoleColor.Cyan;
-        }
+        get => ConsoleColor.Cyan;
     }
 
-    public override bool[,] Render()
+    public override bool[,] Render
     {
-        bool[,] shape = {
-            { false, false, false, false },
-            { true, true, true, true }
-        };
+        get
+        {
+            bool[,] render = new bool[4, 4];
+            
+            switch (Rotation)
+            {
+                case ERotationState.UP:
+                    render = new [,]
+                    {
+                        { false, false, false, false },
+                        { true, true, true, true },
+                        { false, false, false, false },
+                        { false, false, false, false }
+                    };
 
-        return shape;
+                    break;
+                
+                case ERotationState.RIGHT:
+                    render = new [,]
+                    {
+                        { false, false, true, false },
+                        { false, false, true, false },
+                        { false, false, true, false },
+                        { false, false, true, false }
+                    };
+
+                    break;
+                
+                
+                case ERotationState.DOWN:
+                    render = new [,]
+                    {
+                        { false, false, false, false },
+                        { false, false, false, false },
+                        { true, true, true, true },
+                        { false, false, false, false }
+                    };
+
+                    break;
+                
+                
+                case ERotationState.LEFT:
+                    render = new [,]
+                    {
+                        { false, true, false, false },
+                        { false, true, false, false },
+                        { false, true, false, false },
+                        { false, true, false, false }
+                    };
+
+                    break;
+            }
+
+            return render;
+        }
     }
 }

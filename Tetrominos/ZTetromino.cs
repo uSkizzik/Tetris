@@ -9,19 +9,61 @@ public class ZTetromino : Tetromino
 
     public override ConsoleColor Color
     {
-        get
-        {
-            return ConsoleColor.Red;
-        }
+        get => ConsoleColor.Red;
     }
 
-    public override bool[,] Render()
+    public override bool[,] Render
     {
-        bool[,] shape = {
-            { true, true, false },
-            { false, true, true }
-        };
+        get
+        {
+            bool[,] render = new bool[4, 4];
+            
+            switch (Rotation)
+            {
+                case ERotationState.UP:
+                    render = new [,]
+                    {
+                        { true, true, false },
+                        { false, true, true },
+                        { false, false, false }
+                    };
 
-        return shape;
+                    break;
+                
+                case ERotationState.RIGHT:
+                    render = new [,]
+                    {
+                        { false, false, true },
+                        { false, true, true },
+                        { false, true, false }
+                    };
+
+                    break;
+                
+                
+                case ERotationState.DOWN:
+                    render = new [,]
+                    {
+                        { false, false, false },
+                        { true, true, false },
+                        { false, true, true }
+                    };
+
+                    break;
+                
+                
+                case ERotationState.LEFT:
+                    render = new [,]
+                    {
+                        { false, true, false },
+                        { true, true, false },
+                        { true, false, false }
+                    };
+
+                    break;
+            }
+
+            return render;
+        }
     }
 }
