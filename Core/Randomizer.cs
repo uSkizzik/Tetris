@@ -6,8 +6,13 @@ namespace Tetris.Core;
 public class Randomizer
 {
     private static readonly Type[] allTetrominos = {
+        typeof(ITetromino), 
+        typeof(JTetromino), 
+        typeof(LTetromino), 
         typeof(OTetromino), 
-        typeof(LTetromino)
+        typeof(STetromino), 
+        typeof(ZTetromino), 
+        typeof(TTetromino)
     };
     
     private List<Type> possibleTetrominnos = allTetrominos.ToList();
@@ -32,7 +37,7 @@ public class Randomizer
     {
         if (possibleTetrominnos.Count == 0) ResetPossibleTetrominos();
         
-        Type tetromino = possibleTetrominnos[new Random().Next(possibleTetrominnos.Count)];
+        Type tetromino = possibleTetrominnos[random.Next(possibleTetrominnos.Count)];
         possibleTetrominnos.Remove(tetromino);
 
         return Activator.CreateInstance(tetromino, canvasSize) as Tetromino;

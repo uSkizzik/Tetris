@@ -7,19 +7,19 @@ namespace Tetris
 
     class TetrisGame
     {
-        private static Point canvasSize = new Point(10, 20);
+        private readonly static Point canvasSize = new Point(10, 20);
 
-        private bool[,] filledPixels = new bool[canvasSize.X, canvasSize.Y];
-        private ConsoleColor[,] pixelColors = new ConsoleColor[canvasSize.X, canvasSize.Y];
+        private readonly bool[,] filledPixels = new bool[canvasSize.X, canvasSize.Y];
+        private readonly ConsoleColor[,] pixelColors = new ConsoleColor[canvasSize.X, canvasSize.Y];
 
         private Tetromino? activeTetromino;
         private List<Tetromino> tetrominoQueue = new List<Tetromino>();
 
         private int moveTime;
-        private System.Timers.Timer timer;
+        private readonly System.Timers.Timer timer;
 
-        private Randomizer randomizer;
-        private Renderer renderer;
+        private readonly Randomizer randomizer;
+        private readonly Renderer renderer;
 
         public TetrisGame()
         {

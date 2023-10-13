@@ -1,9 +1,9 @@
 ﻿using System.Drawing;
 namespace Tetris.Tetrominos;
 
-public class LTetromino : Tetromino
+public class ZTetromino : Tetromino
 {
-    public LTetromino(Point canvasSize) : base(canvasSize)
+    public ZTetromino(Point canvasSize) : base(canvasSize)
     {
     }
 
@@ -11,15 +11,15 @@ public class LTetromino : Tetromino
     {
         get
         {
-            return ConsoleColor.DarkYellow;
+            return ConsoleColor.Red;
         }
     }
 
     public override bool[,] Render()
     {
         bool[,] shape = {
-            { false, false, true },
-            { true, true, true }
+            { true, true, false },
+            { false, true, true }
         };
 
         return shape;

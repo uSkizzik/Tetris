@@ -5,11 +5,11 @@ namespace Tetris.Core;
 
 public class Renderer
 {
-    private Point matrixSize;
-    private const int borderSize = 2;
+    private readonly Point matrixSize;
+    private static int borderSize = 2;
     
-    private int matrixOffsetLeft;
-    private int matrixOffsetRight;
+    private readonly int matrixOffsetLeft;
+    private readonly int matrixOffsetRight;
 
     private static char fullTile = '■';
     private static char emptyTile = '◦';
@@ -26,14 +26,14 @@ public class Renderer
         bool[,] shape = tetromino.Render();
         ConsoleColor color = tetromino.Color;
 
-        if (overrideTiles)
-        {
-            for (int i = 0; i < canvas.GetLength(1); i++)
-            {
-                for (int j = 0; j < canvas.GetLength(0); j++)
-                    canvas[j, i] = false;
-            }
-        }
+        // if (overrideTiles)
+        // {
+        //     for (int i = 0; i < canvas.GetLength(1); i++)
+        //     {
+        //         for (int j = 0; j < canvas.GetLength(0); j++)
+        //             canvas[j, i] = false;
+        //     }
+        // }
 
         for (int i = 0; i < shape.GetLength(1); i++)
         {
@@ -55,9 +55,9 @@ public class Renderer
     {
         int CursorLeft = matrixOffsetRight + 5;
         
-        bool[,] canvas = new bool[2, 4];
-        ConsoleColor[,] colorCanvas = new ConsoleColor[2, 3];
-
+        bool[,] canvas = new bool[4, 2];
+        ConsoleColor[,] colorCanvas = new ConsoleColor[4, 2];
+        
         Console.CursorTop = 0;
         Console.CursorLeft = CursorLeft;
         Console.Write("NEXT:");
@@ -67,15 +67,15 @@ public class Renderer
         Console.CursorTop = 1;
         Console.CursorLeft = CursorLeft;
         Console.ForegroundColor = colorCanvas[0, 0];
-
+        
         for (int i = 0; i < 4; i++)
-            Console.Write(canvas[0, i] ? fullTile + " " : "");
-
+            Console.Write(canvas[i, 0] ? fullTile + " " : "");
+        
         Console.CursorTop = 2;
         Console.CursorLeft = CursorLeft;
         
         for (int i = 0; i < 4; i++)
-            Console.Write(canvas[1, i] ? fullTile + " " : "");
+            Console.Write(canvas[i, 1] ? fullTile + " " : "");
     }
 
     public void ClearEmptyLines()
