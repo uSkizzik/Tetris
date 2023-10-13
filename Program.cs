@@ -21,6 +21,7 @@ public class TetrisGame
     private int moveTime;
     private readonly System.Timers.Timer timer;
 
+    private readonly AudioPlayer audioPlayer;
     private readonly InputHandler inputHandler;
     private readonly Randomizer randomizer;
     private readonly Renderer renderer;
@@ -34,9 +35,10 @@ public class TetrisGame
         SetMoveTime(300);
         timer.Elapsed += TickTetromino;
 
+        audioPlayer = new AudioPlayer();
         inputHandler = new InputHandler(this);
         randomizer = new Randomizer(canvasSize);
-        renderer = new Renderer(canvasSize);
+        renderer = new Renderer(canvasSize, this);
 
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -47,9 +49,19 @@ public class TetrisGame
         get => activeTetromino;
     }
 
+    public Tetromino HeldTetromino
+    {
+        get => heldTetromino;
+    }
+
+    public List<Tetromino> TetrominoQueue
+    {
+        get => tetrominoQueue;
+    }
+
     public Screen Screen
     {
-        get => Screen;
+        get => screen;
     }
 
     private void SetMoveTime(int moveTime)
@@ -64,6 +76,37 @@ public class TetrisGame
         activeTetromino = tetromino;
     }
 
+    private Tetromino MoveQueue()
+    {
+        Tetromino toSpawn = tetrominoQueue[0];
+        
+        tetrominoQueue.Add(randomizer.RandomTetromino());
+        tetrominoQueue.RemoveAt(0);
+
+        return toSpawn;
+    }
+
+    public void HoldTetromino()
+    {
+        if (activeTetromino == null || activeTetromino.wasHeld)
+        {
+            audioPlayer.PlayErrorSound();
+            return;
+        }
+        
+        Tetromino toBeHeld = activeTetromino;
+        toBeHeld.wasHeld = true;
+
+        if (heldTetromino == null)
+        {
+            heldTetromino = MoveQueue();
+            heldTetromino.wasHeld = true;
+        }
+
+        SpawnTetromino(heldTetromino);
+        heldTetromino = toBeHeld;
+    }
+
     private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
     {
         int maxPos = canvasSize.Y;
@@ -75,10 +118,7 @@ public class TetrisGame
             else if (tetrominoQueue.Count > 0)
             {
                 renderer.LockTetromino(activeTetromino);
-
-                SpawnTetromino(tetrominoQueue[0]);
-                tetrominoQueue.Add(randomizer.RandomTetromino());
-                tetrominoQueue.RemoveAt(0);
+                SpawnTetromino(MoveQueue());
             }
         }
     }
@@ -92,7 +132,7 @@ public class TetrisGame
         
         while (true)
         {
-            renderer.DrawFrame(activeTetromino, tetrominoQueue);
+            renderer.DrawFrame();
             inputHandler.HandleInput();
         }
     }

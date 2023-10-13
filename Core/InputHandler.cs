@@ -28,6 +28,9 @@ public class InputHandler
     {
         switch (key)  
         {
+            case ConsoleKey.C:
+                game.HoldTetromino();
+                break;
         }  
     }
 }

@@ -9,6 +9,8 @@ public class Renderer
     private static readonly char emptyTile = '◦';
     private static readonly int borderSize = 2;
     
+    private readonly TetrisGame game;
+    
     private readonly Point matrixSize;
     private readonly int matrixOffsetLeft;
     private readonly int matrixOffsetRight;
@@ -16,13 +18,14 @@ public class Renderer
     private readonly bool[,] bgCanvas;
     private readonly ConsoleColor[,] bgColorCanvas;
     
-    public Renderer(Point matrixSize)
+    public Renderer(Point matrixSize, TetrisGame game)
     {
+        this.game = game;
         this.matrixSize = matrixSize;
+        
         matrixOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
         matrixOffsetRight = matrixSize.X * 2 + matrixOffsetLeft + borderSize + 2;
-        
-        
+
         bgCanvas = new bool[matrixSize.X, matrixSize.Y];
         bgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
     }
@@ -42,12 +45,12 @@ public class Renderer
         DrawTetromino(tetromino, bgCanvas, bgColorCanvas);
     }
     
-    public void DrawTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, bool overrideTiles = false)
+    public void DrawTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, bool staticRender = false)
     {
         bool[,] shape = tetromino.Render();
         ConsoleColor color = tetromino.Color;
 
-        // if (overrideTiles)
+        // if (staticRender)
         // {
         //     for (int i = 0; i < canvas.GetLength(1); i++)
         //     {
@@ -60,9 +63,15 @@ public class Renderer
         {
             for (int j = 0; j < shape.GetLength(0); j++)
             {
-                int canvasX = tetromino.Position.X + i;
-                int canvasY = tetromino.Position.Y + j;
+                int canvasX = i;
+                int canvasY = j;
 
+                if (!staticRender)
+                {
+                    canvasX += tetromino.Position.X;
+                    canvasY += tetromino.Position.Y;
+                }
+                
                 if (shape[j, i])
                 {
                     canvas[canvasX, canvasY] = true;
@@ -71,35 +80,60 @@ public class Renderer
             }
         }
     }
-    
-    public void DrawQueue(List<Tetromino> queue)
+
+    private void DrawSidebar(int offsetX, string title, Tetromino? tetromino)
     {
-        int CursorLeft = matrixOffsetRight + 5;
-        
         bool[,] canvas = new bool[4, 2];
         ConsoleColor[,] colorCanvas = new ConsoleColor[4, 2];
         
         Console.CursorTop = 0;
-        Console.CursorLeft = CursorLeft;
-        Console.Write("NEXT:");
+        Console.CursorLeft = offsetX;
+        Console.ForegroundColor = ConsoleColor.Gray;
         
-        DrawTetromino(queue[0], canvas, colorCanvas, true);
+        Console.WriteLine(title + ":");
+        Console.WriteLine();
+
+        if (tetromino == null)
+        {
+            Console.CursorLeft = offsetX;
+            Console.WriteLine("NONE");
+            
+            return;
+        }
         
-        Console.CursorTop = 1;
-        Console.CursorLeft = CursorLeft;
+        DrawTetromino(tetromino, canvas, colorCanvas, true);
         Console.ForegroundColor = colorCanvas[0, 0];
         
-        for (int i = 0; i < 4; i++)
-            Console.Write(canvas[i, 0] ? fullTile + " " : "");
-        
-        Console.CursorTop = 2;
-        Console.CursorLeft = CursorLeft;
-        
-        for (int i = 0; i < 4; i++)
-            Console.Write(canvas[i, 1] ? fullTile + " " : "");
+        for (int y = 0; y < canvas.GetLength(1); y++)
+        {
+            Console.CursorLeft = offsetX;
+
+            for (int x = 0; x < canvas.GetLength(0); x++)
+            {
+                bool isTileFilled = canvas[x, y];
+                ConsoleColor tileColor = colorCanvas[x, y];
+                
+                Console.ForegroundColor = isTileFilled && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
+                Console.Write(isTileFilled ? fullTile + " " : "  ");
+            }
+            
+            Console.WriteLine();
+        }
+    }
+    
+    private void DrawHeld(Tetromino? heldTetromino)
+    {
+        int cursorLeft = matrixOffsetLeft - 5 - 5;
+        DrawSidebar(cursorLeft, "HELD", heldTetromino);
+    }
+    
+    private void DrawQueue(List<Tetromino> queue)
+    {
+        int cursorLeft = matrixOffsetRight + 5;
+        DrawSidebar(cursorLeft, "NEXT", queue[0]);
     }
 
-    public void ClearEmptyLines()
+    private void ClearEmptyLines()
     {
         for (int i = matrixSize.Y + 2; i < Console.WindowHeight; i++)
         {
@@ -113,33 +147,29 @@ public class Renderer
         }
     }
 
-    public void DrawFrame(Tetromino activeTetromino, List<Tetromino> tetrominoQueue)
+    public void DrawFrame()
     {
         bool[,] fgCanvas = new bool[matrixSize.X, matrixSize.Y];
         ConsoleColor[,] fgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
         
-        DrawTetromino(activeTetromino, fgCanvas, fgColorCanvas);
-
-        Console.CursorLeft = 0;
+        DrawTetromino(game.ActiveTetromino, fgCanvas, fgColorCanvas);
+        
         Console.CursorTop = 0;
-
-        int fieldOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
-        int fieldOffsetRight = Console.WindowWidth - matrixSize.X * 2 - fieldOffsetLeft - 6;
-
+        
         for (int y = 0; y <= matrixSize.Y; y++)
         {
+            Console.CursorLeft = matrixOffsetLeft;
             Console.ForegroundColor = ConsoleColor.Gray;
-                    
-            Console.Write(new string(' ', fieldOffsetLeft));
+            
             Console.Write("<!");
-
+        
             if (y < matrixSize.Y)
             {
                 for (int x = 0; x < matrixSize.X; x++)
                 {
                     bool isTileFilled = fgCanvas[x, y] || bgCanvas[x, y];
                     ConsoleColor tileColor = fgColorCanvas[x, y] != ConsoleColor.Black ? fgColorCanvas[x, y] : bgColorCanvas[x, y];
-
+        
                     Console.ForegroundColor = isTileFilled && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
                     Console.Write(isTileFilled ? fullTile + " " : emptyTile + " ");
                 }
@@ -148,18 +178,17 @@ public class Renderer
             {
                 Console.Write(new string('=', matrixSize.X * 2));
             }
-
+        
             Console.Write("!>");
-            // Console.Write(new string(' ', fieldOffsetRight));
-
             Console.WriteLine();
         }
-
-        Console.Write(new string(' ', fieldOffsetLeft + 2));
+        
+        Console.CursorLeft = matrixOffsetLeft + 2;
         Console.WriteLine(string.Concat(Enumerable.Repeat("\\/", matrixSize.X)));
-        // Console.Write(new string(' ', fieldOffsetRight));
-
-        DrawQueue(tetrominoQueue);
+        
+        DrawHeld(game.HeldTetromino);
+        DrawQueue(game.TetrominoQueue);
+        
         ClearEmptyLines();
     }
 }

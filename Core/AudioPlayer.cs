@@ -1,7 +1,24 @@
 ﻿namespace Tetris.Core;
 
-public class SongPlayer
+public class AudioPlayer
 {
+    private bool canPlaySound;
+    
+    public AudioPlayer()
+    {
+        this.canPlaySound = true;
+    }
+    
+    public void PlayErrorSound()
+    {
+        if (!canPlaySound) return;
+        
+        canPlaySound = false;
+        Console.Beep(500, 250);
+        
+        Task.Delay(250).ContinueWith(t => canPlaySound = true);
+    }
+    
     public static void PlayThemeSong()
     {
         Task.Run(PlayThemeSongThreaded);
