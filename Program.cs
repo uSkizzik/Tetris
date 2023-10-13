@@ -7,7 +7,7 @@ namespace Tetris
 
     class TetrisGame
     {
-        private readonly static Point canvasSize = new Point(10, 20);
+        private static readonly Point canvasSize = new Point(10, 20);
 
         private readonly bool[,] filledPixels = new bool[canvasSize.X, canvasSize.Y];
         private readonly ConsoleColor[,] pixelColors = new ConsoleColor[canvasSize.X, canvasSize.Y];
@@ -69,9 +69,10 @@ namespace Tetris
 
             while (true)
             {
-                
                 bool[,] canvas = new bool[canvasSize.X, canvasSize.Y];
-                renderer.DrawTetromino(activeTetromino, canvas, pixelColors);
+                ConsoleColor[,] colorCanvas = new ConsoleColor[canvasSize.X, canvasSize.Y];
+                
+                renderer.DrawTetromino(activeTetromino, canvas, colorCanvas);
 
                 Console.CursorLeft = 0;
                 Console.CursorTop = 0;
@@ -90,10 +91,11 @@ namespace Tetris
                     {
                         for (int x = 0; x < canvasSize.X; x++)
                         {
-                            bool isPixelFilled = canvas[x, y] || filledPixels[x, y];
+                            bool isTileFilled = canvas[x, y] || filledPixels[x, y];
+                            ConsoleColor tileColor = pixelColors[x, y] != ConsoleColor.Black ? pixelColors[x, y] : colorCanvas[x, y];
 
-                            Console.ForegroundColor = isPixelFilled && pixelColors[x, y] != ConsoleColor.Black ? pixelColors[x, y] : ConsoleColor.Gray;
-                            Console.Write(isPixelFilled ? "■ " : "◦ ");
+                            Console.ForegroundColor = isTileFilled && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
+                            Console.Write(isTileFilled ? "■ " : "◦ ");
                         }
                     }
                     else
