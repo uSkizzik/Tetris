@@ -37,8 +37,8 @@ public class TetrisGame
 
         audioPlayer = new AudioPlayer();
         inputHandler = new InputHandler(this);
-        randomizer = new Randomizer(canvasSize, audioPlayer);
         renderer = new Renderer(canvasSize, this);
+        randomizer = new Randomizer(canvasSize, audioPlayer, renderer);
 
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -105,7 +105,7 @@ public class TetrisGame
             return;
         }
 
-        activeTetromino.Move(direction, renderer.BGCanvas);
+        activeTetromino.Move(direction);
     }
 
     public void HoldTetromino()
@@ -135,8 +135,8 @@ public class TetrisGame
     {
         if (activeTetromino != null)
         {
-            if (!activeTetromino.WillCollide(renderer.BGCanvas, new Point( activeTetromino.Position.X, activeTetromino.Position.Y + 1)))
-                activeTetromino.Move(EMoveDirecton.DOWN, renderer.BGCanvas);
+            if (!activeTetromino.WillCollide(activeTetromino.Position.X, activeTetromino.Position.Y + 1))
+                activeTetromino.Move(EMoveDirecton.DOWN);
             else if (tetrominoQueue.Count > 0)
             {
                 renderer.LockTetromino(activeTetromino);

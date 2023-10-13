@@ -5,7 +5,7 @@ namespace Tetris.Tetrominos;
 
 public class STetromino : Tetromino
 {
-    public STetromino(Point canvasSize, AudioPlayer audioPlayer) : base(canvasSize, audioPlayer)
+    public STetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer) : base(canvasSize, audioPlayer, renderer)
     {
     }
 
@@ -14,58 +14,55 @@ public class STetromino : Tetromino
         get => ConsoleColor.Green;
     }
 
-    public override bool[,] Shape
+    protected override bool[,] GetShape(ERotationState rotation)
     {
-        get
+        bool[,] render = new bool[4, 4];
+        
+        switch (rotation)
         {
-            bool[,] render = new bool[4, 4];
+            case ERotationState.UP:
+                render = new [,]
+                {
+                    { false, true, true },
+                    { true, true, false },
+                    { false, false, false }
+                };
+
+                break;
             
-            switch (Rotation)
-            {
-                case ERotationState.UP:
-                    render = new [,]
-                    {
-                        { false, true, true },
-                        { true, true, false },
-                        { false, false, false }
-                    };
+            case ERotationState.RIGHT:
+                render = new [,]
+                {
+                    { false, true, false },
+                    { false, true, true },
+                    { false, false, true }
+                };
 
-                    break;
-                
-                case ERotationState.RIGHT:
-                    render = new [,]
-                    {
-                        { false, true, false },
-                        { false, true, true },
-                        { false, false, true }
-                    };
+                break;
+            
+            
+            case ERotationState.DOWN:
+                render = new [,]
+                {
+                    { false, false, false },
+                    { false, true, true },
+                    { true, true, false }
+                };
 
-                    break;
-                
-                
-                case ERotationState.DOWN:
-                    render = new [,]
-                    {
-                        { false, false, false },
-                        { false, true, true },
-                        { true, true, false }
-                    };
+                break;
+            
+            
+            case ERotationState.LEFT:
+                render = new [,]
+                {
+                    { true, false, false },
+                    { true, true, false },
+                    { false, true, false }
+                };
 
-                    break;
-                
-                
-                case ERotationState.LEFT:
-                    render = new [,]
-                    {
-                        { true, false, false },
-                        { true, true, false },
-                        { false, true, false }
-                    };
-
-                    break;
-            }
-
-            return render;
+                break;
         }
+
+        return render;
     }
 }

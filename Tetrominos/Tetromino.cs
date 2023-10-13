@@ -28,11 +28,13 @@ public abstract class Tetromino
     public bool wasHeld;
 
     private readonly AudioPlayer audioPlayer;
+    private readonly Renderer renderer;
 
-    public Tetromino(Point canvasSize, AudioPlayer audioPlayer)
+    public Tetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer)
     {
         this.canvasSize = canvasSize;
         this.audioPlayer = audioPlayer;
+        this.renderer = renderer;
         
         position = new(0, 0);
         wasHeld = false;
@@ -66,38 +68,56 @@ public abstract class Tetromino
         if (newRot < 0) newRot = 3;
         else if (newRot > 3) newRot = 0;
         
+        if (WillCollide((ERotationState) newRot)) return;
         rotation = (ERotationState) newRot;
     }
 
-    public void Move(EMoveDirecton direction, bool[,] filledTiles)
+    public void Move(EMoveDirecton direction)
     {
         switch (direction)
         {
             case EMoveDirecton.RIGHT:
-                if (WillCollide(filledTiles, new Point(position.X + 1, position.Y))) break;
+                if (WillCollide(position.X + 1, position.Y)) break;
                 
                 position.X++;
                 break;
             
             case EMoveDirecton.DOWN:
-                if (WillCollide(filledTiles, new Point( position.X, position.Y + 1))) break;
+                if (WillCollide(position.X, position.Y + 1)) break;
                 
                 position.Y++;
                 break;
             
             case EMoveDirecton.LEFT:
-                if (WillCollide(filledTiles, new Point(position.X - 1, position.Y))) break;
+                if (WillCollide(position.X - 1, position.Y)) break;
                 
                 position.X--;
                 break;
         }
     }
 
-    public bool WillCollide(bool[,] filledTiles, Point newPos)
+    public bool WillCollide(Point newPos)
     {
-        for (int y = 0; y < Shape.GetLength(0); y++) {
-            for (int x = 0; x < Shape.GetLength(1); x++) {
-                if (Shape[y, x])
+        return WillCollide(newPos, rotation);
+    }
+
+    public bool WillCollide(ERotationState newRot)
+    {
+        return WillCollide(position, newRot);
+    }
+
+    public bool WillCollide(int x, int y)
+    {
+        return WillCollide(new Point(x, y), rotation);
+    }
+
+    public bool WillCollide(Point newPos, ERotationState newRot)
+    {
+        bool[,] shape = GetShape(newRot);
+            
+        for (int y = 0; y < shape.GetLength(0); y++) {
+            for (int x = 0; x < shape.GetLength(1); x++) {
+                if (shape[y, x])
                 {
                     int maxPosX = canvasSize.X - 1;
                     int maxPosY = canvasSize.Y - 1;
@@ -107,7 +127,7 @@ public abstract class Tetromino
 
                     bool isOutOfBounds = pixelPosX < 0 || pixelPosX > maxPosX || pixelPosY < 0 || pixelPosY > maxPosY;
                     
-                    if (isOutOfBounds || filledTiles[pixelPosX, pixelPosY]) {
+                    if (isOutOfBounds || renderer.BGCanvas[pixelPosX, pixelPosY]) {
                         audioPlayer.PlayErrorSound();
                         return true;
                     }
@@ -118,71 +138,10 @@ public abstract class Tetromino
         return false;
     }
 
-    public bool[,] TrimmedShape
+    public bool[,] GetShape()
     {
-        get
-        {
-            int rows = Shape.GetLength(0);
-            int cols = Shape.GetLength(1);
-
-            bool[] nonEmptyRows = new bool[rows];
-            for (int i = 0; i < rows; i++)
-            {
-                nonEmptyRows[i] = false;
-                
-                for (int j = 0; j < cols; j++)
-                {
-                    if (Shape[i, j])
-                    {
-                        nonEmptyRows[i] = true;
-                        break;
-                    }
-                }
-            }
-
-            bool[] nonEmptyCols = new bool[cols];
-            for (int j = 0; j < cols; j++)
-            {
-                nonEmptyCols[j] = false;
-                
-                for (int i = 0; i < rows; i++)
-                {
-                    if (Shape[i, j])
-                    {
-                        nonEmptyCols[j] = true;
-                        break;
-                    }
-                }
-            }
-
-            bool[,] trimmedShape = new bool[nonEmptyRows.Count(r => r), nonEmptyCols.Count(c => c)];
-
-            int newRow = 0;
-            for (int i = 0; i < nonEmptyRows.Length; i++)
-            {
-                if (nonEmptyRows[i])
-                {
-                    int newCol = 0;
-                    
-                    for (int j = 0; j < nonEmptyCols.Length; j++)
-                    {
-                        if (nonEmptyCols[j])
-                        {
-                            trimmedShape[newRow, newCol] = Shape[i, j];
-                            newCol++;
-                        }
-                    }
-                    
-                    newRow++;
-                }
-            }
-
-            return trimmedShape;
-        }
+        return GetShape(rotation);
     }
     
-    public abstract bool[,] Shape
-    {
-        get;
-    }
+    protected abstract bool[,] GetShape(ERotationState rotation);
 }

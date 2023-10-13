@@ -5,7 +5,7 @@ namespace Tetris.Tetrominos;
 
 public class OTetromino : Tetromino
 {
-    public OTetromino(Point canvasSize, AudioPlayer audioPlayer) : base(canvasSize, audioPlayer)
+    public OTetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer) : base(canvasSize, audioPlayer, renderer)
     {
     }
 
@@ -14,16 +14,13 @@ public class OTetromino : Tetromino
         get => ConsoleColor.Yellow;
     }
 
-    public override bool[,] Shape
+    protected override bool[,] GetShape(ERotationState rotation)
     {
-        get
+        return new [,]
         {
-            return new [,]
-            {
-                { true, true },
-                { true, true }
-            };
-        }
+            { true, true },
+            { true, true }
+        };
     }
 }
 
