@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Linq;
 using Tetris.Core;
 using Tetris.Tetrominos;
 
@@ -56,32 +55,11 @@ namespace Tetris
                     activeTetromino.pos.Y++;
                 else if (tetrominoQueue.Count > 0)
                 {
-                    RenderTetromino(activeTetromino, filledPixels);
+                    renderer.DrawTetromino(activeTetromino, filledPixels, pixelColors);
 
                     activeTetromino = tetrominoQueue[0];
                     tetrominoQueue.Add(RandomTetromino());
                     tetrominoQueue.RemoveAt(0);
-                }
-            }
-        }
-
-        private void RenderTetromino(Tetromino tetromino, bool[,] canvas)
-        {
-            bool[,] shape = activeTetromino.Render();
-            ConsoleColor color = activeTetromino.Color;
-
-            for (int i = 0; i < shape.GetLength(1); i++)
-            {
-                for (int j = 0; j < shape.GetLength(0); j++)
-                {
-                    int canvasX = activeTetromino.pos.X + i;
-                    int canvasY = activeTetromino.pos.Y + j;
-
-                    if (shape[j, i])
-                    {
-                        canvas[canvasX, canvasY] = true;
-                        pixelColors[canvasX, canvasY] = color;
-                    }
                 }
             }
         }
@@ -95,8 +73,9 @@ namespace Tetris
 
             while (true)
             {
+                
                 bool[,] canvas = new bool[canvasSize.X, canvasSize.Y];
-                RenderTetromino(activeTetromino, canvas);
+                renderer.DrawTetromino(activeTetromino, canvas, pixelColors);
 
                 Console.CursorLeft = 0;
                 Console.CursorTop = 0;
@@ -106,6 +85,8 @@ namespace Tetris
 
                 for (int y = 0; y <= canvasSize.Y; y++)
                 {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    
                     Console.Write(new string(' ', fieldOffsetLeft));
                     Console.Write("<!");
 
@@ -125,16 +106,17 @@ namespace Tetris
                     }
 
                     Console.Write("!>");
-                    Console.Write(new string(' ', fieldOffsetRight));
+                    // Console.Write(new string(' ', fieldOffsetRight));
 
                     Console.WriteLine();
                 }
 
                 Console.Write(new string(' ', fieldOffsetLeft + 2));
                 Console.WriteLine(string.Concat(Enumerable.Repeat("\\/", canvasSize.X)));
-                Console.Write(new string(' ', fieldOffsetRight));
+                // Console.Write(new string(' ', fieldOffsetRight));
 
-                renderer.renderQueue(tetrominoQueue);
+                renderer.DrawQueue(tetrominoQueue);
+                renderer.ClearEmptyLines();
             }
         }
     }
