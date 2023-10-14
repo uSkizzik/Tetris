@@ -11,7 +11,9 @@ public enum Screen
 
 public class TetrisGame
 {
-    private static readonly Point canvasSize = new (10, 20);
+    private static readonly Point canvasSize = new (10, 22);
+    private static readonly Point visibilityOffset = new (0, -2);
+    
     private static Screen screen;
     
     private Tetromino? activeTetromino;
@@ -37,7 +39,7 @@ public class TetrisGame
 
         audioPlayer = new AudioPlayer();
         inputHandler = new InputHandler(this);
-        renderer = new Renderer(canvasSize, this);
+        renderer = new Renderer(canvasSize, visibilityOffset, this);
         randomizer = new Randomizer(canvasSize, audioPlayer, renderer);
 
         Console.CursorVisible = false;

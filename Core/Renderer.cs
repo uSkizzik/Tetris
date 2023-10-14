@@ -12,16 +12,19 @@ public class Renderer
     private readonly TetrisGame game;
     
     private readonly Point matrixSize;
+    private readonly Point visibilityOffset;
+    
     private readonly int matrixOffsetLeft;
     private readonly int matrixOffsetRight;
     
     private bool[,] bgCanvas;
     private ConsoleColor[,] bgColorCanvas;
     
-    public Renderer(Point matrixSize, TetrisGame game)
+    public Renderer(Point matrixSize, Point visibilityOffset, TetrisGame game)
     {
         this.game = game;
         this.matrixSize = matrixSize;
+        this.visibilityOffset = visibilityOffset;
         
         matrixOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
         matrixOffsetRight = matrixSize.X * 2 + matrixOffsetLeft + borderSize + 2;
@@ -137,9 +140,9 @@ public class Renderer
         DrawSidebarItem(cursorLeft, queue[2]);
     }
 
-    private void ClearEmptyLines()
+    private void ClearEmptyLines(int startingY)
     {
-        for (int i = matrixSize.Y + 2; i < Console.WindowHeight; i++)
+        for (int i = startingY; i < Console.WindowHeight; i++)
         {
             if (i >= Console.WindowHeight) break;
             int currentLineCursor = Console.CursorTop;
@@ -194,15 +197,17 @@ public class Renderer
         DrawTetromino(game.ActiveTetromino, fgCanvas, fgColorCanvas);
         
         Console.CursorTop = 0;
+
+        int matrixY = matrixSize.Y + visibilityOffset.Y;
         
-        for (int y = 0; y <= matrixSize.Y; y++)
+        for (int y = visibilityOffset.Y * -1; y <= matrixSize.Y; y++)
         {
             Console.CursorLeft = matrixOffsetLeft;
             Console.ForegroundColor = ConsoleColor.Gray;
             
             Console.Write("<!");
         
-            if (y < matrixSize.Y)
+            if (y - visibilityOffset.Y * -1 < matrixY)
             {
                 for (int x = 0; x < matrixSize.X; x++)
                 {
@@ -230,7 +235,7 @@ public class Renderer
         DrawHeld(game.HeldTetromino);
         DrawQueue(game.TetrominoQueue);
         
-        ClearEmptyLines();
+        ClearEmptyLines(matrixY + 2);
     }
 }
 
