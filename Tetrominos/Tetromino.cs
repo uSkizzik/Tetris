@@ -138,6 +138,14 @@ public abstract class Tetromino
         }
     }
 
+    public void HardDropTetromino()
+    {
+        while (!WillCollide(position.X, position.Y + 1))
+        {
+            Move(EMoveDirecton.DOWN);
+        }
+    }
+
     public bool WillCollide(Point newPos)
     {
         return WillCollide(newPos, rotation);

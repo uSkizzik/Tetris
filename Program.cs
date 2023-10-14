@@ -112,6 +112,17 @@ public class TetrisGame
         activeTetromino.Move(direction);
     }
 
+    public void HardDropTetromino()
+    {
+        if (activeTetromino == null)
+        {
+            audioPlayer.PlayErrorSound();
+            return;
+        }
+
+        activeTetromino.HardDropTetromino();
+    }
+
     public void HoldTetromino()
     {
         if (activeTetromino == null || activeTetromino.wasHeld)

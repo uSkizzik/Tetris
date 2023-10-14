@@ -71,12 +71,16 @@ public class InputHandler
                 game.MoveTetromino(EMoveDirecton.LEFT);
                 break;
             
+            case ConsoleKey.RightArrow:
+                game.MoveTetromino(EMoveDirecton.RIGHT);
+                break;
+            
             case ConsoleKey.DownArrow:
                 game.MoveTetromino(EMoveDirecton.DOWN);
                 break;
             
-            case ConsoleKey.RightArrow:
-                game.MoveTetromino(EMoveDirecton.RIGHT);
+            case ConsoleKey.Spacebar:
+                game.HardDropTetromino();
                 break;
             
             case ConsoleKey.C:
