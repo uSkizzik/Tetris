@@ -148,6 +148,9 @@ public class TetrisGame
 
     public void Run() {
         SpawnTetromino(randomizer.RandomTetromino());
+        
+        tetrominoQueue.Add(randomizer.RandomTetromino());
+        tetrominoQueue.Add(randomizer.RandomTetromino());
         tetrominoQueue.Add(randomizer.RandomTetromino());
 
         timer.Enabled = true;

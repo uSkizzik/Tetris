@@ -72,17 +72,20 @@ public class Renderer
         }
     }
 
-    private void DrawSidebar(int offsetX, string title, Tetromino? tetromino)
+    private void DrawSidebarTitle(int offsetX, string title)
     {
-        bool[,] canvas = new bool[4, 2];
-        ConsoleColor[,] colorCanvas = new ConsoleColor[4, 2];
-        
         Console.CursorTop = 0;
         Console.CursorLeft = offsetX;
         Console.ForegroundColor = ConsoleColor.Gray;
         
         Console.WriteLine(title + ":");
         Console.WriteLine();
+    }
+    
+    private void DrawSidebarItem(int offsetX, Tetromino? tetromino)
+    {
+        bool[,] canvas = new bool[4, 2];
+        ConsoleColor[,] colorCanvas = new ConsoleColor[4, 2];
 
         if (tetromino == null)
         {
@@ -115,13 +118,23 @@ public class Renderer
     private void DrawHeld(Tetromino? heldTetromino)
     {
         int cursorLeft = matrixOffsetLeft - 5 - 5;
-        DrawSidebar(cursorLeft, "HELD", heldTetromino);
+        
+        DrawSidebarTitle(cursorLeft, "HELD");
+        DrawSidebarItem(cursorLeft, heldTetromino);
     }
     
     private void DrawQueue(List<Tetromino> queue)
     {
         int cursorLeft = matrixOffsetRight + 5;
-        DrawSidebar(cursorLeft, "NEXT", queue[0]);
+        DrawSidebarTitle(cursorLeft, "NEXT");
+        
+        DrawSidebarItem(cursorLeft, queue[0]);
+        Console.WriteLine();
+        
+        DrawSidebarItem(cursorLeft, queue[1]);
+        Console.WriteLine();
+        
+        DrawSidebarItem(cursorLeft, queue[2]);
     }
 
     private void ClearEmptyLines()
