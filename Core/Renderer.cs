@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
+using Tetris.Screens;
 using Tetris.Tetrominos;
 
 namespace Tetris.Core;
 
-public class Renderer
+public class Renderer : IScreen
 {
     private static readonly char fullTile = '■';
     private static readonly char emptyTile = '◦';
@@ -131,13 +132,21 @@ public class Renderer
         int cursorLeft = matrixOffsetRight + 5;
         DrawSidebarTitle(cursorLeft, "NEXT");
         
-        DrawSidebarItem(cursorLeft, queue[0]);
-        Console.WriteLine();
-        
-        DrawSidebarItem(cursorLeft, queue[1]);
-        Console.WriteLine();
-        
-        DrawSidebarItem(cursorLeft, queue[2]);
+        if (queue.Count != 0)
+        {
+            DrawSidebarItem(cursorLeft, queue[0]);
+            Console.WriteLine();
+
+            DrawSidebarItem(cursorLeft, queue[1]);
+            Console.WriteLine();
+
+            DrawSidebarItem(cursorLeft, queue[2]);
+        }
+        else
+        {
+            Console.CursorLeft = cursorLeft;
+            Console.Write("NONE");
+        }
     }
 
     private void ClearEmptyLines(int startingY)
@@ -194,7 +203,8 @@ public class Renderer
         bool[,] fgCanvas = new bool[matrixSize.X, matrixSize.Y];
         ConsoleColor[,] fgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
         
-        DrawTetromino(game.ActiveTetromino, fgCanvas, fgColorCanvas);
+        if (game.ActiveTetromino != null) 
+            DrawTetromino(game.ActiveTetromino, fgCanvas, fgColorCanvas);
         
         Console.CursorTop = 0;
 
@@ -237,6 +247,11 @@ public class Renderer
         DrawQueue(game.TetrominoQueue);
         
         ClearEmptyLines(matrixY + 2);
+    }
+
+    public void OnScreenChange()
+    {
+        Console.Clear();
     }
 }
 

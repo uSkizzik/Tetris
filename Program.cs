@@ -1,20 +1,16 @@
 ﻿using System.Drawing;
 using Tetris.Core;
+using Tetris.Screens;
 using Tetris.Tetrominos;
 
 namespace Tetris;
-
-public enum Screen
-{
-    GAME
-}
 
 public class TetrisGame
 {
     private static readonly Point canvasSize = new (10, 22);
     private static readonly Point visibilityOffset = new (0, -2);
     
-    private static Screen screen;
+    private IScreen screenInstance;
     
     private Tetromino? activeTetromino;
     private Tetromino? heldTetromino;
@@ -30,7 +26,7 @@ public class TetrisGame
 
     public TetrisGame()
     {
-        screen = Screen.GAME;
+        screenInstance = new MainMenu(this);
         
         timer = new System.Timers.Timer();
         //SetMoveTime(1500);
@@ -46,12 +42,12 @@ public class TetrisGame
         Console.OutputEncoding = System.Text.Encoding.UTF8;
     }
 
-    public Tetromino ActiveTetromino
+    public Tetromino? ActiveTetromino
     {
         get => activeTetromino;
     }
 
-    public Tetromino HeldTetromino
+    public Tetromino? HeldTetromino
     {
         get => heldTetromino;
     }
@@ -61,9 +57,14 @@ public class TetrisGame
         get => tetrominoQueue;
     }
 
-    public Screen Screen
+    public IScreen ScreenInstance
     {
-        get => screen;
+        get => screenInstance;
+    }
+
+    public Renderer Renderer
+    {
+        get => renderer;
     }
 
     private void SetMoveTime(int moveTime)
@@ -148,7 +149,17 @@ public class TetrisGame
         }
     }
 
-    public void Run() {
+    public void RedrawFrame()
+    {
+        Console.Clear();
+        screenInstance.DrawFrame();
+    }
+
+    public void StartGame()
+    {
+        screenInstance = renderer;
+        RedrawFrame();
+        
         SpawnTetromino(randomizer.RandomTetromino());
         
         tetrominoQueue.Add(randomizer.RandomTetromino());
@@ -156,13 +167,22 @@ public class TetrisGame
         tetrominoQueue.Add(randomizer.RandomTetromino());
 
         timer.Enabled = true;
+    }
+
+    public void Exit()
+    {
+        Environment.Exit(0);
+    }
+
+    public void Run(bool skipMenu) {
         AudioPlayer.PlayThemeSong();
+        if (skipMenu) StartGame();
         
         while (true)
         {
-            renderer.DrawFrame();
             inputHandler.HandleInput();
-
+            screenInstance.DrawFrame();
+            
             List<int> fullRows = new List<int>();
             
             for (int y = 0; y < renderer.BGCanvas.GetLength(1); y++)
@@ -192,6 +212,6 @@ internal class Program
     static void Main(string[] args)
     {
         TetrisGame game = new TetrisGame();
-        game.Run();
+        game.Run(args.Contains("--skipMenu"));
     }
 }

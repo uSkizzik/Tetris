@@ -1,4 +1,5 @@
-﻿using Tetris.Tetrominos;
+﻿using Tetris.Screens;
+using Tetris.Tetrominos;
 
 namespace Tetris.Core;
 
@@ -10,19 +11,47 @@ public class InputHandler
     {
         this.game = game;
     }
-    
+
     public void HandleInput()
     {
-        if (Console.KeyAvailable)  
-        { 
+        if (Console.KeyAvailable)
+        {
             ConsoleKeyInfo key = Console.ReadKey(true);
 
-            switch (game.Screen)
+            if (key.Key == ConsoleKey.F5)
             {
-                case Screen.GAME:  
-                    HandleGameInput(key.Key);  
+                game.RedrawFrame();
+            }
+
+            switch (game.ScreenInstance)
+            {
+                case MainMenu:  
+                    HandleMainMenuInput(key.Key);  
+                    break;
+
+                case Renderer:
+                    HandleGameInput(key.Key);
                     break;
             }
+        }
+    }
+
+
+    private void HandleMainMenuInput(ConsoleKey key)
+    {
+        switch (key)  
+        {
+            case ConsoleKey.UpArrow:
+                ((MainMenu) game.ScreenInstance).PrevActiveOption();
+                break;
+            
+            case ConsoleKey.DownArrow:
+                ((MainMenu) game.ScreenInstance).NextActiveOption();
+                break;
+            
+            case ConsoleKey.Enter:
+                ((MainMenu) game.ScreenInstance).SelectOption();
+                break;
         }  
     }
 
