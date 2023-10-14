@@ -183,6 +183,8 @@ public class Renderer
                 Console.Write(new string('=', matrixSize.X * 2));
             }
         
+            Console.ForegroundColor = ConsoleColor.Gray; // RIP my fav b-u-g. I'll always remember you.
+            
             Console.Write("!>");
             Console.WriteLine();
         }
