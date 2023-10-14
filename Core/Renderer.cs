@@ -207,7 +207,7 @@ public class Renderer
             
             Console.Write("<!");
         
-            if (y - visibilityOffset.Y * -1 < matrixY)
+            if (y >= 0 && y - visibilityOffset.Y * -1 < matrixY)
             {
                 for (int x = 0; x < matrixSize.X; x++)
                 {
@@ -220,7 +220,8 @@ public class Renderer
             }
             else
             {
-                Console.Write(new string('=', matrixSize.X * 2));
+                if (y < 0) Console.Write(string.Concat(Enumerable.Repeat(emptyTile + " ", matrixSize.X)));
+                else Console.Write(new string('=', matrixSize.X * 2));
             }
         
             Console.ForegroundColor = ConsoleColor.Gray; // RIP my fav b-u-g. I'll always remember you.
