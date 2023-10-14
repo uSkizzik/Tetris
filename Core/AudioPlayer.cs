@@ -9,6 +9,17 @@ public class AudioPlayer
         canPlaySound = true;
     }
     
+    public void PlaySuccessSound()
+    {
+        if (!canPlaySound) return;
+        
+        canPlaySound = false;
+        Console.Beep(1000, 150);
+        Console.Beep(1500, 350);
+        
+        Task.Delay(500).ContinueWith(t => canPlaySound = true);
+    }
+    
     public void PlayErrorSound()
     {
         if (!canPlaySound) return;

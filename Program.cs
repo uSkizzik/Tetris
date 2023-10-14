@@ -160,6 +160,27 @@ public class TetrisGame
         {
             renderer.DrawFrame();
             inputHandler.HandleInput();
+
+            List<int> fullRows = new List<int>();
+            
+            for (int y = 0; y < renderer.BGCanvas.GetLength(1); y++)
+            {
+                bool isRowFull = true;
+                
+                for (int x = 0; x < renderer.BGCanvas.GetLength(0); x++)
+                {
+                    if (!renderer.BGCanvas[x, y])
+                    {
+                        isRowFull = false;
+                        break;
+                    }
+                }
+
+                if (isRowFull) fullRows.Add(y);
+            }
+
+            if (fullRows.Count != 0)
+                renderer.ClearRows(fullRows);
         }
     }
 }

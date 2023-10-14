@@ -15,8 +15,8 @@ public class Renderer
     private readonly int matrixOffsetLeft;
     private readonly int matrixOffsetRight;
     
-    private readonly bool[,] bgCanvas;
-    private readonly ConsoleColor[,] bgColorCanvas;
+    private bool[,] bgCanvas;
+    private ConsoleColor[,] bgColorCanvas;
     
     public Renderer(Point matrixSize, TetrisGame game)
     {
@@ -84,8 +84,8 @@ public class Renderer
     
     private void DrawSidebarItem(int offsetX, Tetromino? tetromino)
     {
-        bool[,] canvas = new bool[4, 2];
-        ConsoleColor[,] colorCanvas = new ConsoleColor[4, 2];
+        bool[,] canvas = new bool[4, 4];
+        ConsoleColor[,] colorCanvas = new ConsoleColor[4, 4];
 
         if (tetromino == null)
         {
@@ -117,7 +117,7 @@ public class Renderer
     
     private void DrawHeld(Tetromino? heldTetromino)
     {
-        int cursorLeft = matrixOffsetLeft - 5 - 5;
+        int cursorLeft = matrixOffsetLeft - 5 - 7;
         
         DrawSidebarTitle(cursorLeft, "HELD");
         DrawSidebarItem(cursorLeft, heldTetromino);
@@ -149,6 +149,41 @@ public class Renderer
             Console.Write(new string(' ', Console.WindowWidth)); 
             Console.SetCursorPosition(0, currentLineCursor);
         }
+    }
+
+    private T[,] ClearCanvas<T>(List<int> rows, T[,] canvas, T defaultValue)
+    {
+        int numCols = bgCanvas.GetLength(0);
+        int numRows = bgCanvas.GetLength(1);
+        T[,] newArray = new T[numCols, numRows];
+
+        int newRow = numRows - 1;
+        
+        for (int i = numRows - 1; i >= rows.Count; i--)
+        {
+            if (rows.Contains(i)) continue;
+                
+            for (int j = 0; j < numCols; j++)
+                newArray[j, newRow] = canvas[j, i];
+
+            newRow--;
+        }
+
+        for (int i = 0; i < rows.Count; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                newArray[j, i] = defaultValue;
+            }
+        }
+
+        return newArray;
+    }
+    
+    public void ClearRows(List<int> rows)
+    {
+        bgCanvas = ClearCanvas(rows, bgCanvas, false);
+        bgColorCanvas = ClearCanvas(rows, bgColorCanvas, ConsoleColor.Black);
     }
 
     public void DrawFrame()
