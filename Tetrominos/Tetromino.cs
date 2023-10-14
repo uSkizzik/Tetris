@@ -71,6 +71,7 @@ public abstract class Tetromino
     {
         position.X = 0;
         position.Y = 4;
+        rotation = ERotationState.UP;
     }
 
     public void Lock()
@@ -141,9 +142,9 @@ public abstract class Tetromino
     public void HardDropTetromino()
     {
         while (!WillCollide(position.X, position.Y + 1))
-        {
             Move(EMoveDirecton.DOWN);
-        }
+        
+        game.LockTetromino(this);
     }
 
     public bool WillCollide(Point newPos)
