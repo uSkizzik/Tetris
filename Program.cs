@@ -7,8 +7,8 @@ namespace Tetris;
 
 public class TetrisGame
 {
-    private static readonly Point canvasSize = new (10, 22);
-    private static readonly Point visibilityOffset = new (0, -2);
+    private static readonly Point canvasSize = new (10, 26);
+    private static readonly Point visibilityOffset = new (0, 0);
     
     private IScreen screenInstance;
     
@@ -36,7 +36,7 @@ public class TetrisGame
         audioPlayer = new AudioPlayer();
         inputHandler = new InputHandler(this);
         renderer = new Renderer(canvasSize, visibilityOffset, this);
-        randomizer = new Randomizer(canvasSize, audioPlayer, renderer);
+        randomizer = new Randomizer(canvasSize, audioPlayer, renderer, this);
 
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -135,6 +135,12 @@ public class TetrisGame
         heldTetromino = toBeHeld;
     }
 
+    public void LockTetromino(Tetromino tetromino)
+    {
+        renderer.LockTetromino(tetromino);
+        if (tetromino == activeTetromino) SpawnTetromino(MoveQueue());
+    }
+
     private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
     {
         if (activeTetromino != null)
@@ -142,10 +148,7 @@ public class TetrisGame
             if (!activeTetromino.WillCollide(activeTetromino.Position.X, activeTetromino.Position.Y + 1))
                 activeTetromino.Move(EMoveDirecton.DOWN);
             else if (tetrominoQueue.Count > 0)
-            {
-                renderer.LockTetromino(activeTetromino);
-                SpawnTetromino(MoveQueue());
-            }
+                activeTetromino.Lock();
         }
     }
 

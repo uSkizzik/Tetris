@@ -5,7 +5,7 @@ namespace Tetris.Tetrominos;
 
 public class TTetromino : Tetromino
 {
-    public TTetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer) : base(canvasSize, audioPlayer, renderer)
+    public TTetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer, TetrisGame game) : base(canvasSize, audioPlayer, renderer, game)
     {
     }
 

@@ -27,17 +27,23 @@ public abstract class Tetromino
     private ERotationState rotation;
     public bool wasHeld;
 
+    private CancellationTokenSource? lockToken;
+    private int timesCancelled;
+
     private readonly AudioPlayer audioPlayer;
     private readonly Renderer renderer;
+    private readonly TetrisGame game;
 
-    public Tetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer)
+    public Tetromino(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer, TetrisGame game)
     {
         this.canvasSize = canvasSize;
         this.audioPlayer = audioPlayer;
         this.renderer = renderer;
+        this.game = game;
         
         position = new(0, 0);
         wasHeld = false;
+        timesCancelled = 0;
     }
 
     public abstract ConsoleColor Color
@@ -58,13 +64,38 @@ public abstract class Tetromino
     public void Spawn()
     {
         position.X = (int) Math.Floor((double) canvasSize.X / 2 - (double) GetShape().GetLength(1) / 2);
-        position.Y = 0;
+        position.Y = 4;
     }
 
     public void Reset()
     {
         position.X = 0;
-        position.Y = 0;
+        position.Y = 4;
+    }
+
+    public void Lock()
+    {
+        if (lockToken == null)
+        {
+            lockToken = new CancellationTokenSource();
+            Task.Delay(500, lockToken.Token).ContinueWith(t =>
+            {
+                if (t.IsCanceled) return;
+                game.LockTetromino(this);
+            });
+        }
+    }
+
+    private void ResetLock()
+    {
+        if (lockToken != null && timesCancelled < 15)
+        {
+            lockToken.Cancel();
+            lockToken = null;
+            timesCancelled++;
+            
+            Lock();
+        }
     }
 
     public void Rotate(bool counterClockwise)
@@ -75,6 +106,8 @@ public abstract class Tetromino
         else if (newRot > 3) newRot = 0;
         
         if (WillCollide((ERotationState) newRot)) return;
+        ResetLock();
+        
         rotation = (ERotationState) newRot;
     }
 
@@ -84,18 +117,21 @@ public abstract class Tetromino
         {
             case EMoveDirecton.RIGHT:
                 if (WillCollide(position.X + 1, position.Y)) break;
+                ResetLock();
                 
                 position.X++;
                 break;
             
             case EMoveDirecton.DOWN:
                 if (WillCollide(position.X, position.Y + 1)) break;
+                ResetLock();
                 
                 position.Y++;
                 break;
             
             case EMoveDirecton.LEFT:
                 if (WillCollide(position.X - 1, position.Y)) break;
+                ResetLock();
                 
                 position.X--;
                 break;

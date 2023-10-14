@@ -22,14 +22,16 @@ public class Randomizer
     
     private readonly AudioPlayer audioPlayer;
     private readonly Renderer renderer;
+    private readonly TetrisGame game;
 
-    public Randomizer(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer)
+    public Randomizer(Point canvasSize, AudioPlayer audioPlayer, Renderer renderer, TetrisGame game)
     {
         this.canvasSize = canvasSize;
         this.random = new Random();
         
         this.audioPlayer = audioPlayer;
         this.renderer = renderer;
+        this.game = game;
         
         ResetPossibleTetrominos();
     }
@@ -46,6 +48,6 @@ public class Randomizer
         Type tetromino = possibleTetrominnos[random.Next(possibleTetrominnos.Count)];
         possibleTetrominnos.Remove(tetromino);
 
-        return Activator.CreateInstance(tetromino, canvasSize, audioPlayer, renderer) as Tetromino;
+        return Activator.CreateInstance(tetromino, canvasSize, audioPlayer, renderer, game) as Tetromino;
     }
 }
