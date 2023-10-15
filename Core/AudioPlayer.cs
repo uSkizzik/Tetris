@@ -20,12 +20,12 @@ public class AudioPlayer
         Task.Delay(500).ContinueWith(t => canPlaySound = true);
     }
     
-    public void PlayErrorSound()
+    public void PlayBeep()
     {
         if (!canPlaySound) return;
         
         canPlaySound = false;
-        Console.Beep(500, 250);
+        Console.Beep(500, 150);
         
         Task.Delay(250).ContinueWith(t => canPlaySound = true);
     }

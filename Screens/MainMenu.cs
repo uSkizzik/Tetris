@@ -134,6 +134,8 @@ public class MainMenu : IScreen
                 Exit();
                 break;
         }
+        
+        _game.AudioPlayer.PlayBeep();
     }
 
     private void PlayGame()

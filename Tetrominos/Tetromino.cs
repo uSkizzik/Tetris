@@ -96,6 +96,7 @@ public abstract class Tetromino
                 }
                 
                 game.LockTetromino(this);
+                game.AudioPlayer.PlayBeep();
             }, lockToken.Token);
         }
     }
@@ -144,7 +145,9 @@ public abstract class Tetromino
         }
         
         ResetLock();
+        
         rotation = (ERotationState) newRot;
+        game.AudioPlayer.PlayBeep();
     }
 
     public void Move(EMoveDirecton direction, bool isUserInput = true)
@@ -156,13 +159,19 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X++;
+                if (isUserInput) game.AudioPlayer.PlayBeep();
+                
                 break;
             
             case EMoveDirecton.DOWN:
                 if (WillCollide(position.X, position.Y + 1)) break;
                 position.Y++;
 
-                if (isUserInput) game.ScoreTracker.TetronimoSoftDropped();
+                if (isUserInput)
+                {
+                    game.ScoreTracker.TetronimoSoftDropped();
+                    game.AudioPlayer.PlayBeep();
+                }
                 
                 break;
             
@@ -171,6 +180,8 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X--;
+                if (isUserInput) game.AudioPlayer.PlayBeep();
+                
                 break;
         }
     }
@@ -218,7 +229,7 @@ public abstract class Tetromino
                     bool isOutOfBounds = pixelPosX < 0 || pixelPosX > maxPosX || pixelPosY < 0 || pixelPosY > maxPosY;
                     
                     if (isOutOfBounds || renderer.BGCanvas[pixelPosX, pixelPosY]) {
-                        audioPlayer.PlayErrorSound();
+                        audioPlayer.PlayBeep();
                         return true;
                     }
                 }

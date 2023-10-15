@@ -50,6 +50,11 @@ public class TetrisGame
         set => lockTime = value;
     }
 
+    public AudioPlayer AudioPlayer
+    {
+        get => audioPlayer;
+    }
+
     public ScoreTracker ScoreTracker
     {
         get => scoreTracker;
@@ -107,7 +112,7 @@ public class TetrisGame
     {
         if (activeTetromino == null)
         {
-            audioPlayer.PlayErrorSound();
+            audioPlayer.PlayBeep();
             return;
         }
 
@@ -118,7 +123,7 @@ public class TetrisGame
     {
         if (activeTetromino == null)
         {
-            audioPlayer.PlayErrorSound();
+            audioPlayer.PlayBeep();
             return;
         }
 
@@ -129,7 +134,7 @@ public class TetrisGame
     {
         if (activeTetromino == null)
         {
-            audioPlayer.PlayErrorSound();
+            audioPlayer.PlayBeep();
             return;
         }
 
@@ -140,7 +145,7 @@ public class TetrisGame
     {
         if (activeTetromino == null || activeTetromino.wasHeld)
         {
-            audioPlayer.PlayErrorSound();
+            audioPlayer.PlayBeep();
             return;
         }
         
