@@ -8,7 +8,7 @@ namespace Tetris;
 public class TetrisGame
 {
     private static readonly Point canvasSize = new (10, 26);
-    private static readonly Point visibilityOffset = new (0, -6);
+    private static readonly Point visibilityOffset = new (0, 0);
     
     private IScreen screenInstance;
     
@@ -149,17 +149,19 @@ public class TetrisGame
     public void LockTetromino(Tetromino tetromino)
     {
         renderer.LockTetromino(tetromino);
-        if (tetromino == activeTetromino) SpawnTetromino(MoveQueue());
+        if (tetromino == activeTetromino && tetrominoQueue.Count > 0) SpawnTetromino(MoveQueue());
     }
 
     private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
-    {
-        if (activeTetromino != null)
+    { 
+        // There's used to be a racing condition somewhere that causes a newly spawned tetromino to get locked in the air.
+        // Took me some debugging to find out. I was confused as to why Lock gets called on it but the last WillCollide check used the previous tetromino.
+        // Anyways, I'm not sure if it still exists but just in case we solve it by saving the tetromino at the start of the function and using the saved value.
+        Tetromino? tetromino = activeTetromino;
+        
+        if (tetromino != null)
         {
-            if (!activeTetromino.WillCollide(activeTetromino.Position.X, activeTetromino.Position.Y + 1))
-                activeTetromino.Move(EMoveDirecton.DOWN);
-            else if (tetrominoQueue.Count > 0)
-                activeTetromino.Lock();
+            tetromino.Tick();
         }
     }
 

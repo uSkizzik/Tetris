@@ -74,16 +74,25 @@ public abstract class Tetromino
         rotation = ERotationState.UP;
     }
 
+    public void Tick()
+    {
+        if (lockToken == null && !WillCollide(this.Position.X, this.Position.Y + 1))
+            Move(EMoveDirecton.DOWN);
+        else
+            Lock();
+    }
+
     public void Lock()
     {
         if (lockToken == null)
         {
             lockToken = new CancellationTokenSource();
-            Task.Delay(500, lockToken.Token).ContinueWith(t =>
+            
+            Task.Delay(500).ContinueWith(t =>
             {
                 if (t.IsCanceled) return;
                 game.LockTetromino(this);
-            });
+            }, lockToken.Token);
         }
     }
 
@@ -110,6 +119,7 @@ public abstract class Tetromino
         ResetLock();
         
         rotation = (ERotationState) newRot;
+        Tick();
     }
 
     public void Move(EMoveDirecton direction)
@@ -121,13 +131,14 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X++;
+                Tick();
+                
                 break;
             
             case EMoveDirecton.DOWN:
                 if (WillCollide(position.X, position.Y + 1)) break;
-                ResetLock();
-                
                 position.Y++;
+                
                 break;
             
             case EMoveDirecton.LEFT:
@@ -135,6 +146,8 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X--;
+                Tick();
+
                 break;
         }
     }
