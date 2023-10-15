@@ -76,7 +76,7 @@ public abstract class Tetromino
 
     public void Tick()
     {
-        if (lockToken == null && !WillCollide(this.Position.X, this.Position.Y + 1))
+        if (lockToken == null && !WillCollide(Position.X, Position.Y + 1))
             Move(EMoveDirecton.DOWN);
         else
             Lock();
@@ -90,7 +90,12 @@ public abstract class Tetromino
             
             Task.Delay(500).ContinueWith(t =>
             {
-                if (t.IsCanceled) return;
+                if (t.IsCanceled || !WillCollide(position.X, position.Y + 1))
+                {
+                    lockToken = null;
+                    return;
+                }
+                
                 game.LockTetromino(this);
             }, lockToken.Token);
         }
