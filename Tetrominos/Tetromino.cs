@@ -123,23 +123,23 @@ public abstract class Tetromino
         if (WillCollide((ERotationState) newRot))
         {
             if (!WillCollide(position with { X = position.X + 1 }, (ERotationState)newRot))
-                Move(EMoveDirecton.RIGHT, false);
-            
+                position.X++;
+
             else if (!WillCollide(position with { X = position.X - 1 }, (ERotationState)newRot))
-                Move(EMoveDirecton.LEFT, false);
-            
+                position.X--;
+
+            else if (!WillCollide(position with { Y = position.Y - 1 }, (ERotationState)newRot))
+                position.Y--;
+
             else if (!WillCollide(position with { X = position.X + 2 }, (ERotationState)newRot))
-            {
-                Move(EMoveDirecton.RIGHT, false);
-                Move(EMoveDirecton.RIGHT, false);
-            }
-            
+                position.X += 2;
+
             else if (!WillCollide(position with { X = position.X - 2 }, (ERotationState)newRot))
-            {
-                Move(EMoveDirecton.LEFT, false);
-                Move(EMoveDirecton.LEFT, false);
-            }
-            
+                position.X -= 2;
+
+            else if (!WillCollide(position with { Y = position.Y - 2 }, (ERotationState)newRot))
+                position.Y--;
+
             else
                 return;
         }
