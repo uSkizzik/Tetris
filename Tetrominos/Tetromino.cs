@@ -124,7 +124,6 @@ public abstract class Tetromino
         ResetLock();
         
         rotation = (ERotationState) newRot;
-        Tick();
     }
 
     public void Move(EMoveDirecton direction, bool isUserInput = true)
@@ -136,8 +135,6 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X++;
-                Tick();
-                
                 break;
             
             case EMoveDirecton.DOWN:
@@ -153,8 +150,6 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X--;
-                Tick();
-
                 break;
         }
     }
