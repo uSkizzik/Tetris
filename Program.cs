@@ -229,11 +229,31 @@ public class TetrisGame
     public void Run(bool skipMenu) {
         AudioPlayer.PlayThemeSong();
         if (skipMenu) StartGame();
+
+        int lastWidth = Console.WindowWidth;
+        int lastHeight = Console.WindowHeight;
         
         while (true)
         {
+            if (Console.WindowWidth != lastWidth || Console.WindowHeight != lastHeight)
+            {
+                lastWidth = Console.WindowWidth;
+                lastHeight = Console.WindowHeight;
+                screenInstance.RefreshScreenSize(Console.WindowWidth, Console.WindowHeight);
+                Console.Clear();
+            }
+                
             inputHandler.HandleInput();
-            screenInstance.DrawFrame();
+
+            try
+            {
+                screenInstance.DrawFrame();
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("Error drawing frame!");
+                Console.WriteLine(err);
+            }
         }
     }
 }

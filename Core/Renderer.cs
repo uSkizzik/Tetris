@@ -14,9 +14,9 @@ public class Renderer : IScreen
     
     private readonly Point matrixSize;
     private readonly Point visibilityOffset;
-    
-    private readonly int matrixOffsetLeft;
-    private readonly int matrixOffsetRight;
+
+    private int windowWidth;
+    private int windowHeight;
     
     private bool[,] bgCanvas;
     private ConsoleColor[,] bgColorCanvas;
@@ -26,12 +26,11 @@ public class Renderer : IScreen
         this.game = game;
         this.matrixSize = matrixSize;
         this.visibilityOffset = visibilityOffset;
-        
-        matrixOffsetLeft = Console.WindowWidth / 2 - matrixSize.X;
-        matrixOffsetRight = matrixSize.X * 2 + matrixOffsetLeft + borderSize + 2;
 
         bgCanvas = new bool[matrixSize.X, matrixSize.Y];
         bgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
+
+        RefreshScreenSize(Console.WindowWidth, Console.WindowHeight);
     }
 
     public bool[,] BGCanvas
@@ -44,6 +43,22 @@ public class Renderer : IScreen
         get => bgColorCanvas;
     }
 
+    private int matrixOffsetLeft
+    {
+        get => Console.WindowWidth / 2 - matrixSize.X;
+    }
+
+    private int matrixOffsetRight
+    {
+        get => matrixSize.X * 2 + matrixOffsetLeft + borderSize + 2;
+    }
+
+    public void RefreshScreenSize(int width, int height)
+    {
+        windowWidth = width;
+        windowHeight = height;
+    }
+    
     public void LockTetromino(Tetromino tetromino)
     {
         DrawTetromino(tetromino, bgCanvas, bgColorCanvas);

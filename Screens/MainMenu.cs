@@ -70,11 +70,15 @@ public class MainMenu : IScreen
     private static string[] _options = { "Play", "Exit" };
     private int _selectedOpt;
 
-    private TetrisGame game;
+    private int _windowWidth;
+    private int _windowHeight;
+    
+    private readonly TetrisGame _game;
 
     public MainMenu(TetrisGame game)
     {
-        this.game = game;
+        _game = game;
+        RefreshScreenSize(Console.WindowWidth, Console.WindowHeight);
     }
 
     private int DrawLogoLetter(int x, int y, int index, string[] letter)
@@ -134,12 +138,12 @@ public class MainMenu : IScreen
 
     private void PlayGame()
     {
-        game.StartGame();
+        _game.StartGame();
     }
 
     private void Exit()
     {
-        game.Exit();
+        _game.Exit();
     }
     
     private int DrawOption(int x, int y, int index)
@@ -175,8 +179,8 @@ public class MainMenu : IScreen
         string title = "High Score";
         string highScore = 1000.ToString();
 
-        int logoEnd = Console.WindowWidth / 2 + LogoWidth / 2;
-        int center = logoEnd + (Console.WindowWidth - logoEnd) / 2;
+        int logoEnd = _windowWidth / 2 + LogoWidth / 2;
+        int center = logoEnd + (_windowWidth - logoEnd) / 2;
         
         Console.CursorTop = LogoHeight / 2 + 1;
         
@@ -210,7 +214,7 @@ public class MainMenu : IScreen
         };
         
         Console.CursorLeft = 1;
-        Console.CursorTop = Console.WindowHeight - str.Length - 1;
+        Console.CursorTop = _windowHeight - str.Length - 1;
         Console.ForegroundColor = ConsoleColor.DarkGray;
         
         for (int i = 0; i < str.Length; i++)
@@ -224,16 +228,22 @@ public class MainMenu : IScreen
     {
         string creditStr = "Made by Radostin \"uSkizzik\" Stoyanov";
         
-        Console.CursorLeft = Console.WindowWidth - creditStr.Length;
-        Console.CursorTop = Console.WindowHeight - 1;
+        Console.CursorLeft = _windowWidth - creditStr.Length;
+        Console.CursorTop = _windowHeight - 1;
         Console.ForegroundColor = ConsoleColor.DarkGray;
         
         Console.Write(creditStr);
     }
+
+    public void RefreshScreenSize(int width, int height)
+    {
+        _windowWidth = width;
+        _windowHeight = height;
+    }
     
     public void DrawFrame()
     {
-        int centerX = Console.WindowWidth / 2;
+        int centerX = _windowWidth / 2;
 
         DrawLogo(centerX - LogoWidth / 2, 1);
         DrawOptions(centerX - 2, LogoHeight + 3);

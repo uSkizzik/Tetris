@@ -15,8 +15,7 @@ public enum EMoveDirecton
 {
     RIGHT,
     DOWN,
-    LEFT,
-    HARD_DROP
+    LEFT
 }
 
 public abstract class Tetromino
