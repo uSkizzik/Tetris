@@ -77,7 +77,7 @@ public abstract class Tetromino
     public void Tick()
     {
         if (lockToken == null && !WillCollide(Position.X, Position.Y + 1))
-            Move(EMoveDirecton.DOWN);
+            Move(EMoveDirecton.DOWN, false);
         else
             Lock();
     }
@@ -127,7 +127,7 @@ public abstract class Tetromino
         Tick();
     }
 
-    public void Move(EMoveDirecton direction)
+    public void Move(EMoveDirecton direction, bool isUserInput = true)
     {
         switch (direction)
         {
@@ -143,6 +143,8 @@ public abstract class Tetromino
             case EMoveDirecton.DOWN:
                 if (WillCollide(position.X, position.Y + 1)) break;
                 position.Y++;
+
+                if (isUserInput) game.ScoreTracker.TetronimoSoftDropped();
                 
                 break;
             
@@ -159,9 +161,12 @@ public abstract class Tetromino
 
     public void HardDropTetromino()
     {
-        while (!WillCollide(position.X, position.Y + 1))
-            Move(EMoveDirecton.DOWN);
+        int startingY = position.Y;
         
+        while (!WillCollide(position.X, position.Y + 1))
+            Move(EMoveDirecton.DOWN, false);
+        
+        game.ScoreTracker.TetronimoHardDropped(startingY, position.Y);
         game.LockTetromino(this);
     }
 

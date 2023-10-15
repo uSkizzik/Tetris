@@ -23,6 +23,7 @@ public class TetrisGame
     private readonly InputHandler inputHandler;
     private readonly Randomizer randomizer;
     private readonly Renderer renderer;
+    private readonly ScoreTracker scoreTracker;
 
     public TetrisGame()
     {
@@ -37,9 +38,15 @@ public class TetrisGame
         inputHandler = new InputHandler(this);
         renderer = new Renderer(canvasSize, visibilityOffset, this);
         randomizer = new Randomizer(canvasSize, audioPlayer, renderer, this);
+        scoreTracker = new ScoreTracker();
 
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+    }
+
+    public ScoreTracker ScoreTracker
+    {
+        get => scoreTracker;
     }
 
     public Tetromino? ActiveTetromino
@@ -150,6 +157,29 @@ public class TetrisGame
     {
         renderer.LockTetromino(tetromino);
         if (tetromino == activeTetromino && tetrominoQueue.Count > 0) SpawnTetromino(MoveQueue());
+        
+        List<int> fullRows = new List<int>();
+            
+        for (int y = 0; y < renderer.BGCanvas.GetLength(1); y++)
+        {
+            bool isRowFull = true;
+                
+            for (int x = 0; x < renderer.BGCanvas.GetLength(0); x++)
+            {
+                if (!renderer.BGCanvas[x, y])
+                {
+                    isRowFull = false;
+                    break;
+                }
+            }
+
+            if (isRowFull) fullRows.Add(y);
+        }
+
+        if (fullRows.Count != 0)
+            renderer.ClearRows(fullRows);
+
+        scoreTracker.TetronimoLocked(fullRows.Count, renderer.BGCanvas);
     }
 
     private void TickTetromino(Object source, System.Timers.ElapsedEventArgs e)
@@ -198,27 +228,6 @@ public class TetrisGame
         {
             inputHandler.HandleInput();
             screenInstance.DrawFrame();
-            
-            List<int> fullRows = new List<int>();
-            
-            for (int y = 0; y < renderer.BGCanvas.GetLength(1); y++)
-            {
-                bool isRowFull = true;
-                
-                for (int x = 0; x < renderer.BGCanvas.GetLength(0); x++)
-                {
-                    if (!renderer.BGCanvas[x, y])
-                    {
-                        isRowFull = false;
-                        break;
-                    }
-                }
-
-                if (isRowFull) fullRows.Add(y);
-            }
-
-            if (fullRows.Count != 0)
-                renderer.ClearRows(fullRows);
         }
     }
 }

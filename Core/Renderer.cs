@@ -148,6 +148,22 @@ public class Renderer : IScreen
             Console.Write("NONE");
         }
     }
+    
+    private void DrawScore()
+    {
+        int cursorLeft = matrixOffsetRight + 5;
+        
+        Console.CursorTop = 1 + 3 * 5;
+        Console.ForegroundColor = ConsoleColor.Gray;
+        
+        Console.CursorLeft = cursorLeft;
+        Console.Write("SCORE:");
+        Console.WriteLine();
+        
+        Console.CursorLeft = cursorLeft;
+        Console.Write(game.ScoreTracker.Score);
+        Console.WriteLine();
+    }
 
     private void ClearEmptyLines(int startingY)
     {
@@ -245,6 +261,7 @@ public class Renderer : IScreen
         
         DrawHeld(game.HeldTetromino);
         DrawQueue(game.TetrominoQueue);
+        DrawScore();
         
         ClearEmptyLines(matrixY + 2);
     }
