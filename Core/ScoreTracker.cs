@@ -1,6 +1,4 @@
-﻿using Tetris.Tetrominos;
-
-namespace Tetris.Core;
+﻿namespace Tetris.Core;
 
 enum EAction
 {
