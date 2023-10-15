@@ -120,9 +120,31 @@ public abstract class Tetromino
         if (newRot < 0) newRot = 3;
         else if (newRot > 3) newRot = 0;
         
-        if (WillCollide((ERotationState) newRot)) return;
-        ResetLock();
+        if (WillCollide((ERotationState) newRot))
+        {
+            if (!WillCollide(position with { X = position.X + 1 }, (ERotationState)newRot))
+                Move(EMoveDirecton.RIGHT, false);
+            
+            else if (!WillCollide(position with { X = position.X - 1 }, (ERotationState)newRot))
+                Move(EMoveDirecton.LEFT, false);
+            
+            else if (!WillCollide(position with { X = position.X + 2 }, (ERotationState)newRot))
+            {
+                Move(EMoveDirecton.RIGHT, false);
+                Move(EMoveDirecton.RIGHT, false);
+            }
+            
+            else if (!WillCollide(position with { X = position.X - 2 }, (ERotationState)newRot))
+            {
+                Move(EMoveDirecton.LEFT, false);
+                Move(EMoveDirecton.LEFT, false);
+            }
+            
+            else
+                return;
+        }
         
+        ResetLock();
         rotation = (ERotationState) newRot;
     }
 
