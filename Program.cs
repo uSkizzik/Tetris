@@ -8,7 +8,7 @@ namespace Tetris;
 public class TetrisGame
 {
     private static readonly Point canvasSize = new (10, 26);
-    private static readonly Point visibilityOffset = new (0, 0);
+    private static readonly Point visibilityOffset = new (0, -6);
     
     private IScreen screenInstance;
     
