@@ -151,9 +151,9 @@ public class Renderer : IScreen
     
     private void DrawScore()
     {
-        int cursorLeft = matrixOffsetRight + 5;
+        int cursorLeft = matrixOffsetLeft - 5 - 7;
         
-        Console.CursorTop = 1 + 3 * 5;
+        Console.CursorTop = 6;
         Console.ForegroundColor = ConsoleColor.Gray;
         
         Console.CursorLeft = cursorLeft;
@@ -162,6 +162,36 @@ public class Renderer : IScreen
         
         Console.CursorLeft = cursorLeft;
         Console.Write(game.ScoreTracker.Score);
+        Console.WriteLine();
+    }
+    
+    private void DrawLevelProgress()
+    {
+        int cursorLeft = matrixOffsetLeft - 5 - 7;
+        
+        Console.CursorTop = 4 + 6;
+        Console.ForegroundColor = ConsoleColor.Gray;
+        
+        Console.CursorLeft = cursorLeft;
+        Console.Write("LEVEL:");
+        Console.WriteLine();
+        
+        Console.CursorLeft = cursorLeft;
+        Console.Write(game.ScoreTracker.Level);
+        Console.WriteLine();
+        
+        Console.WriteLine();
+
+        Console.CursorLeft = cursorLeft;
+        Console.Write("PROGRESS:");
+        Console.WriteLine();
+        
+        Console.CursorLeft = cursorLeft;
+        
+        Console.Write(game.ScoreTracker.LevelProgress);
+        Console.Write(" / ");
+        Console.Write(game.ScoreTracker.LineClearsRequired);
+        
         Console.WriteLine();
     }
 
@@ -261,7 +291,9 @@ public class Renderer : IScreen
         
         DrawHeld(game.HeldTetromino);
         DrawQueue(game.TetrominoQueue);
+        
         DrawScore();
+        DrawLevelProgress();
         
         ClearEmptyLines(matrixY + 2);
     }

@@ -11,6 +11,10 @@ enum EAction
 public class ScoreTracker
 {
     private int _score;
+    
+    private int _level = 1;
+    private int _levelProgress;
+    
     private int _comboProgress = -1;
     private bool _b2bLineClear;
     private bool _b2bPerfectClear;
@@ -18,6 +22,21 @@ public class ScoreTracker
     public int Score
     {
         get => _score;
+    }
+    
+    public int Level
+    {
+        get => _level;
+    }
+    
+    public int LevelProgress
+    {
+        get => _levelProgress;
+    }
+    
+    public int LineClearsRequired
+    {
+        get => _level * 10;
     }
 
     public void TetronimoLocked(int clearedLines, bool[,] matrix)
@@ -27,7 +46,7 @@ public class ScoreTracker
         if (clearedLines > 0)
         {
             _comboProgress++;
-            toAdd += 50 * _comboProgress; // * level;
+            toAdd += 50 * _comboProgress * _level;
         }
         else _comboProgress = -1;
         
@@ -56,8 +75,8 @@ public class ScoreTracker
         
         if (actionType == EAction.TETRIS_PERFECT_CLEAR && _b2bPerfectClear)
             points = 3200;
-        
-        _score += points; // * level
+
+        _score += points * _level;
         
         if (actionType == EAction.LINE_CLEAR)
             _b2bLineClear = false;
@@ -115,6 +134,19 @@ public class ScoreTracker
                 if (isMatrixClear) AddScore(2000, EAction.TETRIS_PERFECT_CLEAR);
                 
                 break;
+        }
+        
+        AddLevelProgress(linesCleared);
+    }
+
+    private void AddLevelProgress(int linesCleared)
+    {
+        _levelProgress = Math.Clamp(_levelProgress += linesCleared, 0, LineClearsRequired);
+
+        if (_levelProgress >= LineClearsRequired)
+        {
+            _level++;
+            _levelProgress = 0;
         }
     }
 }
