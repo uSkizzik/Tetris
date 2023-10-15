@@ -86,6 +86,14 @@ public class InputHandler
             case ConsoleKey.C:
                 game.HoldTetromino();
                 break;
+            
+            case ConsoleKey.PageUp:
+                game.ScoreTracker.Level++;
+                break;
+            
+            case ConsoleKey.PageDown:
+                game.ScoreTracker.Level--;
+                break;
         }  
     }
 }

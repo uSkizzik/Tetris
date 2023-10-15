@@ -19,6 +19,13 @@ public class ScoreTracker
     private bool _b2bLineClear;
     private bool _b2bPerfectClear;
 
+    private readonly TetrisGame game;
+
+    public ScoreTracker(TetrisGame game)
+    {
+        this.game = game;
+    }
+
     public int Score
     {
         get => _score;
@@ -27,6 +34,7 @@ public class ScoreTracker
     public int Level
     {
         get => _level;
+        set => _level = value;
     }
     
     public int LevelProgress
@@ -36,7 +44,7 @@ public class ScoreTracker
     
     public int LineClearsRequired
     {
-        get => _level * 10;
+        get => 10;
     }
 
     public void TetronimoLocked(int clearedLines, bool[,] matrix)
@@ -148,5 +156,16 @@ public class ScoreTracker
             _level++;
             _levelProgress = 0;
         }
+
+        int maxLevel = 20;
+        int baseGravity = 1200;
+        double exponent = Math.Pow((double)1 / baseGravity, 1.0 / (maxLevel - 1));
+        
+        game.SetMoveTime((int) (baseGravity * Math.Pow(exponent, Math.Clamp(_level, 1, maxLevel) - 1)));
+
+        int baseLockTime = 500;
+        int minLockTime = 75;
+        
+        game.LockTime = baseLockTime - (_level - 1) * ((baseLockTime - minLockTime) / maxLevel - 1);
     }
 }

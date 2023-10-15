@@ -17,6 +17,7 @@ public class TetrisGame
     private List<Tetromino> tetrominoQueue = new ();
 
     private int moveTime;
+    private int lockTime;
     private readonly System.Timers.Timer timer;
 
     private readonly AudioPlayer audioPlayer;
@@ -30,18 +31,23 @@ public class TetrisGame
         screenInstance = new MainMenu(this);
         
         timer = new System.Timers.Timer();
-        //SetMoveTime(1500);
-        SetMoveTime(300);
+        SetMoveTime(1200);
         timer.Elapsed += TickTetromino;
 
         audioPlayer = new AudioPlayer();
         inputHandler = new InputHandler(this);
         renderer = new Renderer(canvasSize, visibilityOffset, this);
         randomizer = new Randomizer(canvasSize, audioPlayer, renderer, this);
-        scoreTracker = new ScoreTracker();
+        scoreTracker = new ScoreTracker(this);
 
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+    }
+
+    public int LockTime
+    {
+        get => lockTime;
+        set => lockTime = value;
     }
 
     public ScoreTracker ScoreTracker
@@ -74,9 +80,9 @@ public class TetrisGame
         get => renderer;
     }
 
-    private void SetMoveTime(int moveTime)
+    public void SetMoveTime(int moveTime)
     {
-        this.moveTime = moveTime;
+        this.moveTime = Math.Clamp(moveTime, 1, Int32.MaxValue);
         timer.Interval = this.moveTime;
     }
 

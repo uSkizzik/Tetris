@@ -88,7 +88,7 @@ public abstract class Tetromino
         {
             lockToken = new CancellationTokenSource();
             
-            Task.Delay(500).ContinueWith(t =>
+            Task.Delay(game.LockTime).ContinueWith(t =>
             {
                 if (t.IsCanceled || !WillCollide(position.X, position.Y + 1))
                 {
