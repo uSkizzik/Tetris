@@ -347,8 +347,6 @@ public class Renderer : IScreen
         Console.CursorLeft = windowWidth / 2 - instruction.Length / 2 + 1;
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine(instruction);
-        
-        // ClearEmptyLines(matrixY + 4);
     }
 }
 
