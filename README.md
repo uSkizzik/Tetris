@@ -44,5 +44,6 @@ I didn't do everything the way Tetris recommends, however I did my best to recre
 - ✔️ Scoring Back to Back
 - ❌ Scoring T-Spins
 - ✔️ Levels
+- ✔️ High Score (Persists between restarts)
 - ✔️ Sound Effects
 - ✔️ Music (using Console.Beep())
