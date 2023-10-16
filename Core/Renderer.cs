@@ -8,6 +8,7 @@ namespace Tetris.Core;
 public class Renderer : IScreen
 {
     private static readonly char fullTile = '■';
+    private static readonly char halfTile = '#';
     private static readonly char emptyTile = '◦';
     private static readonly int borderSize = 2;
     
@@ -64,8 +65,18 @@ public class Renderer : IScreen
     {
         DrawTetromino(tetromino, bgCanvas, bgColorCanvas);
     }
-    
+
     public void DrawTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, bool staticRender = false)
+    {
+        DrawTetromino(tetromino, canvas, colorCanvas, tetromino.Position, staticRender);
+    }
+
+    public void DrawGhostTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, bool staticRender = false)
+    {
+        DrawTetromino(tetromino, canvas, colorCanvas, tetromino.GhostPosition, staticRender);
+    }
+    
+    private void DrawTetromino(Tetromino tetromino, bool[,] canvas, ConsoleColor[,] colorCanvas, Point position, bool staticRender = false)
     {
         bool[,] shape = tetromino.GetShape();
         ConsoleColor color = tetromino.Color;
@@ -79,8 +90,8 @@ public class Renderer : IScreen
 
                 if (!staticRender)
                 {
-                    canvasX += tetromino.Position.X;
-                    canvasY += tetromino.Position.Y;
+                    canvasX += position.X;
+                    canvasY += position.Y;
                 }
                 
                 if (shape[j, i])
@@ -276,10 +287,14 @@ public class Renderer : IScreen
     public void DrawFrame()
     {
         bool[,] fgCanvas = new bool[matrixSize.X, matrixSize.Y];
+        bool[,] ghostCanvas = new bool[matrixSize.X, matrixSize.Y];
         ConsoleColor[,] fgColorCanvas = new ConsoleColor[matrixSize.X, matrixSize.Y];
         
-        if (game.ActiveTetromino != null) 
+        if (game.ActiveTetromino != null)
+        {
             DrawTetromino(game.ActiveTetromino, fgCanvas, fgColorCanvas);
+            DrawGhostTetromino(game.ActiveTetromino, ghostCanvas, fgColorCanvas);
+        }
         
         Console.CursorTop = 0;
 
@@ -299,8 +314,11 @@ public class Renderer : IScreen
                     bool isTileFilled = fgCanvas[x, y] || bgCanvas[x, y];
                     ConsoleColor tileColor = fgColorCanvas[x, y] != ConsoleColor.Black ? fgColorCanvas[x, y] : bgColorCanvas[x, y];
         
-                    Console.ForegroundColor = isTileFilled && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
-                    Console.Write(isTileFilled ? fullTile + " " : emptyTile + " ");
+                    Console.ForegroundColor = (ghostCanvas[x, y] || isTileFilled) && tileColor != ConsoleColor.Black ? tileColor : ConsoleColor.Gray;
+                    
+                    if (isTileFilled) Console.Write(fullTile + " ");
+                    else if (ghostCanvas[x, y]) Console.Write(halfTile + " ");
+                    else Console.Write(emptyTile + " ");
                 }
             }
             else

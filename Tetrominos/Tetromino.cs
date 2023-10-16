@@ -70,6 +70,7 @@ public abstract class Tetromino
     {
         position.X = (int) Math.Floor((double) canvasSize.X / 2 - (double) GetShape().GetLength(1) / 2);
         position.Y = 4;
+        RefreshGhostPos();
     }
 
     public void Reset()
@@ -122,9 +123,9 @@ public abstract class Tetromino
     private void RefreshGhostPos()
     {
         ghostPosition.X = position.X;
-        ghostPosition.Y = canvasSize.Y - 1;
+        ghostPosition.Y = position.Y;
         
-        while (!WillCollide(position.X, ghostPosition.Y - 1))
+        while (!WillCollide(position.X, ghostPosition.Y + 1))
             ghostPosition.Y++;
     }
 
@@ -157,14 +158,14 @@ public abstract class Tetromino
 
             else
                 return;
-            
-            RefreshGhostPos();
         }
         
         ResetLock();
         
         rotation = (ERotationState) newRot;
         game.AudioPlayer.PlayBeep();
+        
+        RefreshGhostPos();
     }
 
     public void Move(EMoveDirecton direction, bool isUserInput = true)
