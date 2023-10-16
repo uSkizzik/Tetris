@@ -23,6 +23,7 @@ public abstract class Tetromino
     protected readonly Point canvasSize;
     
     private Point position;
+    private Point ghostPosition;
     private ERotationState rotation;
     public bool wasHeld;
 
@@ -53,6 +54,11 @@ public abstract class Tetromino
     public Point Position
     {
         get => position;
+    }
+
+    public Point GhostPosition
+    {
+        get => ghostPosition;
     }
 
     public ERotationState Rotation
@@ -113,6 +119,12 @@ public abstract class Tetromino
         }
     }
 
+    private void RefreshGhostPos()
+    {
+        while (!WillCollide(position.X, ghostPosition.Y + 1))
+            ghostPosition.Y++;
+    }
+
     public void Rotate(bool counterClockwise)
     {
         int newRot = (int) rotation + (counterClockwise ? -1 : 1);
@@ -142,6 +154,8 @@ public abstract class Tetromino
 
             else
                 return;
+            
+            RefreshGhostPos();
         }
         
         ResetLock();
@@ -159,7 +173,9 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X++;
+                
                 if (isUserInput) game.AudioPlayer.PlayBeep();
+                RefreshGhostPos();
                 
                 break;
             
@@ -180,7 +196,9 @@ public abstract class Tetromino
                 ResetLock();
                 
                 position.X--;
+                
                 if (isUserInput) game.AudioPlayer.PlayBeep();
+                RefreshGhostPos();
                 
                 break;
         }
