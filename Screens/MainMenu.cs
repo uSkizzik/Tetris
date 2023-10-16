@@ -178,7 +178,7 @@ public class MainMenu : IScreen
     private void DrawHighScore()
     {
         string title = "High Score";
-        string highScore = 1000.ToString();
+        string highScore = _game.ScoreTracker.HighScore.ToString();
 
         int logoEnd = _windowWidth / 2 + LogoWidth / 2;
         int center = logoEnd + (_windowWidth - logoEnd) / 2;

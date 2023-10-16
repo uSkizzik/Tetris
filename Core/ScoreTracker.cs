@@ -10,6 +10,10 @@ enum EAction
 
 public class ScoreTracker
 {
+    private static readonly string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "uSkizzik's Tetris");
+    private static readonly string highscorePath = Path.Combine(dataPath, "highscore.txt");
+    
+    private int _highScore;
     private int _score;
     
     private int _level = 1;
@@ -19,11 +23,21 @@ public class ScoreTracker
     private bool _b2bLineClear;
     private bool _b2bPerfectClear;
 
-    private readonly TetrisGame game;
+    private readonly TetrisGame _game;
 
     public ScoreTracker(TetrisGame game)
     {
-        this.game = game;
+        _game = game;
+
+        if (!Directory.Exists(dataPath))
+            Directory.CreateDirectory(dataPath);
+        
+        LoadHighScore();
+    }
+
+    public int HighScore
+    {
+        get => _highScore;
     }
 
     public int Score
@@ -161,11 +175,36 @@ public class ScoreTracker
         int baseGravity = 1200;
         double exponent = Math.Pow((double)1 / baseGravity, 1.0 / (maxLevel - 1));
         
-        game.SetMoveTime((int) (baseGravity * Math.Pow(exponent, Math.Clamp(_level, 1, maxLevel) - 1)));
+        _game.SetMoveTime((int) (baseGravity * Math.Pow(exponent, Math.Clamp(_level, 1, maxLevel) - 1)));
 
         int baseLockTime = 500;
         int minLockTime = 75;
         
-        game.LockTime = baseLockTime - (_level - 1) * ((baseLockTime - minLockTime) / maxLevel - 1);
+        _game.LockTime = baseLockTime - (_level - 1) * ((baseLockTime - minLockTime) / maxLevel - 1);
+    }
+
+    private void LoadHighScore()
+    {
+        if (!File.Exists(highscorePath))
+            WriteScore();
+        
+        StreamReader stream = new StreamReader(highscorePath);
+        _highScore = int.Parse(stream.ReadToEnd());
+        stream.Close();
+    }
+    
+    public void WriteScore()
+    {
+        StreamWriter stream = new StreamWriter(highscorePath, false);
+        stream.Write(_highScore);
+        stream.Close();
+    }
+    
+    public void SaveScore()
+    {
+        if (_score <= _highScore) return;
+        _highScore = _score;
+        
+        WriteScore();
     }
 }

@@ -104,7 +104,10 @@ public class TetrisGame
         activeTetromino.Spawn();
 
         if (tetromino.WillCollide(activeTetromino.Position with { Y = activeTetromino.Position.Y + 1 }, activeTetromino.Rotation, false))
+        {
             isGameOver = true;
+            scoreTracker.SaveScore();
+        }
     }
 
     private Tetromino MoveQueue()
