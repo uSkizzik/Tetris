@@ -37,7 +37,7 @@ I didn't do everything the way Tetris recommends, however I did my best to recre
 - ✔️ Piece Preview / Next Queue
 - ✔️ Holding
 - ✔️ Random Bag / 7 Bag
-- ❌ Ghost Piece
+- ✔️ Ghost Piece
 - ✔️ Scoring via Line Clears
 - ✔️ Scoring via Perfect Clears
 - ✔️ Scoring Combos
