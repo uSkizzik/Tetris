@@ -94,6 +94,10 @@ public class InputHandler
             case ConsoleKey.PageDown:
                 game.ScoreTracker.Level--;
                 break;
+            
+            case ConsoleKey.Escape:
+                game.ReturnToMenu();
+                break;
         }  
     }
 }

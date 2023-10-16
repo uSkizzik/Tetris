@@ -235,6 +235,16 @@ public class TetrisGame
         timer.Enabled = true;
     }
 
+    public void ReturnToMenu()
+    {
+        timer.Enabled = false;
+        activeTetromino = null;
+        tetrominoQueue.Clear();
+        
+        screenInstance = new MainMenu(this);
+        RedrawFrame();
+    }
+
     public void Exit()
     {
         Environment.Exit(0);
