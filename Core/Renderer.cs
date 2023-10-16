@@ -133,6 +133,21 @@ public class Renderer : IScreen
             Console.WriteLine();
         }
     }
+
+    private void DrawTitle()
+    {
+        string title = "TETRIS";
+        Console.CursorLeft = windowWidth / 2 - title.Length / 2 + 1;
+
+        for (int i = 0; i < title.Length; i++)
+        {
+            Console.ForegroundColor = MainMenu.Colors[i];
+            Console.Write(title[i]);
+        }
+
+        Console.ForegroundColor = ConsoleColor.Gray;
+        Console.WriteLine();
+    }
     
     private void DrawHeld(Tetromino? heldTetromino)
     {
@@ -303,6 +318,24 @@ public class Renderer : IScreen
         
         Console.CursorLeft = matrixOffsetLeft + 2;
         Console.WriteLine(string.Concat(Enumerable.Repeat("\\/", matrixSize.X)));
+
+        Console.WriteLine();
+        DrawTitle();
+
+        if (game.IsGameOver)
+        {
+            string text = "GAME OVER";
+            Console.WriteLine();
+            
+            Console.CursorLeft = windowWidth / 2 - text.Length / 2 + 1;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(text);
+
+            string score = "SCORE: " + game.ScoreTracker.Score;
+            Console.CursorLeft = windowWidth / 2 - score.Length / 2 + 1;
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(score);
+        }
         
         DrawHeld(game.HeldTetromino);
         DrawQueue(game.TetrominoQueue);
@@ -310,12 +343,13 @@ public class Renderer : IScreen
         DrawScore();
         DrawLevelProgress();
         
-        ClearEmptyLines(matrixY + 2);
-    }
-
-    public void OnScreenChange()
-    {
-        Console.Clear();
+        string instruction = "Press ESC to return to menu";
+        Console.CursorTop = windowHeight - 2;
+        Console.CursorLeft = windowWidth / 2 - instruction.Length / 2 + 1;
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine(instruction);
+        
+        // ClearEmptyLines(matrixY + 4);
     }
 }
 

@@ -3,7 +3,7 @@
 public class MainMenu : IScreen
 {
     private static readonly int SpaceSize = 2;
-    private static readonly ConsoleColor[] Colors = { ConsoleColor.Red, ConsoleColor.DarkYellow, ConsoleColor.Yellow, ConsoleColor.Green, ConsoleColor.Cyan, ConsoleColor.Magenta };
+    public static readonly ConsoleColor[] Colors = { ConsoleColor.Red, ConsoleColor.DarkYellow, ConsoleColor.Yellow, ConsoleColor.Green, ConsoleColor.Cyan, ConsoleColor.Magenta };
 
     private static readonly string[] T =
     {

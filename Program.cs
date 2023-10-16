@@ -11,6 +11,7 @@ public class TetrisGame
     private static readonly Point visibilityOffset = new (0, -6);
     
     private IScreen screenInstance;
+    private bool isGameOver;
     
     private Tetromino? activeTetromino;
     private Tetromino? heldTetromino;
@@ -42,6 +43,11 @@ public class TetrisGame
 
         Console.CursorVisible = false;
         Console.OutputEncoding = System.Text.Encoding.UTF8;
+    }
+
+    public bool IsGameOver
+    {
+        get => isGameOver;
     }
 
     public int LockTime
@@ -96,6 +102,9 @@ public class TetrisGame
         tetromino.Reset();
         activeTetromino = tetromino;
         activeTetromino.Spawn();
+
+        if (tetromino.WillCollide(activeTetromino.Position with { Y = activeTetromino.Position.Y + 1 }, activeTetromino.Rotation, false))
+            isGameOver = true;
     }
 
     private Tetromino MoveQueue()
@@ -167,7 +176,7 @@ public class TetrisGame
     public void LockTetromino(Tetromino tetromino)
     {
         renderer.LockTetromino(tetromino);
-        if (tetromino == activeTetromino && tetrominoQueue.Count > 0) SpawnTetromino(MoveQueue());
+        if (tetromino == activeTetromino && tetrominoQueue.Count > 0 && !isGameOver) SpawnTetromino(MoveQueue());
         
         List<int> fullRows = new List<int>();
             
