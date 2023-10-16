@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Xml.Schema;
 using Tetris.Screens;
 using Tetris.Tetrominos;
 
@@ -225,17 +226,15 @@ public class Renderer : IScreen
         Console.WriteLine();
     }
 
-    private void ClearEmptyLines(int startingY)
+    public void ClearCanvas()
     {
-        for (int i = startingY; i < windowHeight; i++)
+        for (int x = 0; x < BGCanvas.GetLength(0); x++)
         {
-            if (i >= windowHeight) break;
-            int currentLineCursor = Console.CursorTop;
-            
-            Console.SetCursorPosition(0, i);
-            
-            Console.Write(new string(' ', windowWidth)); 
-            Console.SetCursorPosition(0, currentLineCursor);
+            for (int y = 0; y < BGCanvas.GetLength(1); y++)
+            {
+                BGCanvas[x, y] = false;
+                BGColorCanvas[x, y] = ConsoleColor.Black;
+            }
         }
     }
 

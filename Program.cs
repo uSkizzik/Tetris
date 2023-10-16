@@ -226,23 +226,30 @@ public class TetrisGame
 
     public void StartGame()
     {
+        isGameOver = false;
+        activeTetromino = null;
+        heldTetromino = null;
+        lockTime = 500;
+        
+        scoreTracker.Reset();
         screenInstance = renderer;
-        RedrawFrame();
         
-        SpawnTetromino(randomizer.RandomTetromino());
+        renderer.ClearCanvas();
         
+        tetrominoQueue.Clear();
         tetrominoQueue.Add(randomizer.RandomTetromino());
         tetrominoQueue.Add(randomizer.RandomTetromino());
         tetrominoQueue.Add(randomizer.RandomTetromino());
 
+        SpawnTetromino(randomizer.RandomTetromino());
+        
         timer.Enabled = true;
+        RedrawFrame();
     }
 
     public void ReturnToMenu()
     {
         timer.Enabled = false;
-        activeTetromino = null;
-        tetrominoQueue.Clear();
         
         screenInstance = new MainMenu(this);
         RedrawFrame();

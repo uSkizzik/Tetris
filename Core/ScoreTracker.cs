@@ -61,6 +61,18 @@ public class ScoreTracker
         get => 10;
     }
 
+    public void Reset()
+    { 
+        _score = 0;
+            
+        _level = 1;
+        _levelProgress = 0;
+
+        _comboProgress = -1;
+        _b2bLineClear = false;
+        _b2bPerfectClear = false;
+    }
+
     public void TetronimoLocked(int clearedLines, bool[,] matrix)
     {
         int toAdd = 0;
