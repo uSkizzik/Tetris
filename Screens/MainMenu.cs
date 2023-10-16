@@ -148,7 +148,7 @@ public class MainMenu : IScreen
         _game.Exit();
     }
     
-    private int DrawOption(int x, int y, int index)
+    private void DrawOption(int x, int y, int index)
     {
         Console.CursorLeft = x;
         Console.CursorTop = y + index * 2;
@@ -163,7 +163,6 @@ public class MainMenu : IScreen
         }
         
         Console.Write(_options[index]);
-        return 2;
     }
     
     private void DrawOptions(int x, int y)
@@ -211,7 +210,7 @@ public class MainMenu : IScreen
             "C - Hold Tetromino",
             "Z - Rotate Counter-Clockwise",
             "",
-            "M - Toggle Audio",
+            "ESC - Return to menu",
             "F5 - Redraw Frame"
         };
         
