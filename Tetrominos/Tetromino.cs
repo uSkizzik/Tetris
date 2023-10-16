@@ -121,7 +121,10 @@ public abstract class Tetromino
 
     private void RefreshGhostPos()
     {
-        while (!WillCollide(position.X, ghostPosition.Y + 1))
+        ghostPosition.X = position.X;
+        ghostPosition.Y = canvasSize.Y - 1;
+        
+        while (!WillCollide(position.X, ghostPosition.Y - 1))
             ghostPosition.Y++;
     }
 
