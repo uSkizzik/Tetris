@@ -45,7 +45,7 @@ public class Renderer : IScreen
 
     private int matrixOffsetLeft
     {
-        get => Console.WindowWidth / 2 - matrixSize.X;
+        get => windowWidth / 2 - matrixSize.X;
     }
 
     private int matrixOffsetRight
@@ -212,14 +212,14 @@ public class Renderer : IScreen
 
     private void ClearEmptyLines(int startingY)
     {
-        for (int i = startingY; i < Console.WindowHeight; i++)
+        for (int i = startingY; i < windowHeight; i++)
         {
-            if (i >= Console.WindowHeight) break;
+            if (i >= windowHeight) break;
             int currentLineCursor = Console.CursorTop;
             
             Console.SetCursorPosition(0, i);
             
-            Console.Write(new string(' ', Console.WindowWidth)); 
+            Console.Write(new string(' ', windowWidth)); 
             Console.SetCursorPosition(0, currentLineCursor);
         }
     }
