@@ -212,7 +212,7 @@ public abstract class Tetromino
         return WillCollide(new Point(x, y), rotation);
     }
 
-    public bool WillCollide(Point newPos, ERotationState newRot, bool beep = true)
+    public bool WillCollide(Point newPos, ERotationState newRot)
     {
         bool[,] shape = GetShape(newRot);
             
@@ -228,10 +228,8 @@ public abstract class Tetromino
 
                     bool isOutOfBounds = pixelPosX < 0 || pixelPosX > maxPosX || pixelPosY < 0 || pixelPosY > maxPosY;
                     
-                    if (isOutOfBounds || renderer.BGCanvas[pixelPosX, pixelPosY]) {
-                        if (beep) audioPlayer.PlayBeep();
+                    if (isOutOfBounds || renderer.BGCanvas[pixelPosX, pixelPosY])
                         return true;
-                    }
                 }
             }
         }
